@@ -788,7 +788,6 @@ end
 
 
 sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
-
   @cluster = concurrent map $group in $groups return @instances on_error : handle_error("Cluster Launch Error") do
     if $group['nodes'] > 0
       if $group['clustered'] == "false"

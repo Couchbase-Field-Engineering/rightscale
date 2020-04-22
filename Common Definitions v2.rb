@@ -80,11 +80,11 @@ parameter "os" do
 end
 
 parameter "version" do
-    type "list"
-    label "Couchbase Server Version"
-    allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0",  "Cheshire-Cat-latest"
-    default "6.5.0"
-    description "6.5.0 Now Available!"
+  type "list"
+  label "Couchbase Server Version"
+  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "Mad-Hatter-latest", "Cheshire-Cat-latest", "Magma-Preview-latest"
+  default "6.5.0"
+  description "6.5.0 Now Available!"
 end
 parameter "cbserver_version" do
     like $version
@@ -318,10 +318,18 @@ mapping "os_mapping" do {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "url"
     },
+    "Mad-Hatter-latest" => {
+      "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/latest",
+      "version" => "mad-hatter-preview"
+    },
     "Cheshire-Cat-latest" => {
         "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/latest",
         "version" => "cheshire-cat"
     },
+    "Magma-Preview-latest" => {
+        "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/latest",
+        "version" => "magma-preview"
+    }
 } end
 
 mapping "region_mapping" do {
@@ -424,21 +432,6 @@ resource 'server', type: 'server' do
     instance_type 'm4.xlarge'
     ssh_key 'Perry_Couchbase'
     server_template find('Couchbase Self-Service Template 5.0', revision: 0)
-    cloud_specific_attributes do {
-        "automatic_instance_store_mapping" => "true",
-        "associate_public_ip_address" => "false",
-        "root_volume_type_uid" => "standard"
-    } end
-end
-
-resource 'acidapp', type: 'server' do
-    cloud map($region_mapping, $region, "cloud")
-    datacenter map($region_mapping, $region, "datacenter")
-    subnets "VPC"
-    security_groups map($security_group_mapping, $security_group, "security_group")
-    instance_type 'm4.xlarge'
-    ssh_key 'Perry_Couchbase'
-    server_template find('Couchbase Self-Service Template 5.0 ACID', revision: 0)
     cloud_specific_attributes do {
         "automatic_instance_store_mapping" => "true",
         "associate_public_ip_address" => "false",

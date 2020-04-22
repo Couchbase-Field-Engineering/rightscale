@@ -9,45 +9,45 @@ short_description 'CAT file of helper functions'
 #########
 
 parameter "region" do
-  type "list"
-  label "AWS Region"
-  allowed_values "EC2 Oregon (us-west-2)", "EC2 Virginia (us-east-1)", "EC2 Nor Cal (us-west-1)","EC2 Ireland (eu-west-1)", "EC2 Singapore (ap-southeast-1)"
-  default "EC2 Oregon (us-west-2)"
-  operations 'launch'
+    type "list"
+    label "AWS Region"
+    allowed_values "EC2 Oregon (us-west-2)", "EC2 Virginia (us-east-1)", "EC2 Nor Cal (us-west-1)","EC2 Ireland (eu-west-1)", "EC2 Singapore (ap-southeast-1)"
+    default "EC2 Oregon (us-west-2)"
+    operations 'launch'
 end
 parameter "shutdown" do
-  type "number"
-  label "Auto Shutdown in minutes"
-  default 240
+    type "number"
+    label "Auto Shutdown in minutes"
+    default 240
 end
 parameter "cluster_port" do
-  type "number"
-  label "Override UI/REST port when blocked by network.  Must be >1023, <65536 and not: 4369, 8092 to 8095, 9100 to 9105, 9998, 9999, 11209 to 11211, 11214, 11215, 18091 to 18094, and 21100 to 21299"
-  min_value 1024
-  max_value 65535
-  default 8091
+    type "number"
+    label "Override UI/REST port when blocked by network.  Must be >1023, <65536 and not: 4369, 8092 to 8095, 9100 to 9105, 9998, 9999, 11209 to 11211, 11214, 11215, 18091 to 18094, and 21100 to 21299"
+    min_value 1024
+    max_value 65535
+    default 8091
 end
 parameter "sg_port" do
-  type "number"
-  label "Override Sync Gateway port when blocked by network.  Must be >1023, <65536."
-  min_value 1024
-  max_value 65535
-  default 4984
+    type "number"
+    label "Override Sync Gateway port when blocked by network.  Must be >1023, <65536."
+    min_value 1024
+    max_value 65535
+    default 4984
 end
 parameter "disk_size" do
-  type "number"
-  label "Disk size in GB"
-  #    min_value 0
-  max_value 4096
-  default 0
-  description "The root partition is always 10GB, and is used for the Couchbase installation directory.  Data & index directories will use /couchbase.  If disk size here is >0, an EBS drive of this size is mounted to /couchbase.  If 0, /couchbase will be created on the root partition.    Some instance types may provide local SSDs.  These are mounted to /ephemeral and will NOT persist across a stop/start cycle.  Set this value to -1 to map /couchbase to local SSDs if available (data will NOT be available after start/stop/restart). Please refer to https://aws.amazon.com/ec2/instance-types/ for more information."
-  #description "The root (/) partition has 10GB of EBS storage, if you need more, enter a value up to 1024 for EBS disk (\"General Purpose\").  This will automatically be mounted as /couchbase and the nodes configured to use it as their data AND index paths.  Some instances also come with \"ephemeral\" storage but this will NOT be persistent across a stop/start cycle"
+    type "number"
+    label "Disk size in GB"
+    #    min_value 0
+    max_value 4096
+    default 0
+    description "The root partition is always 10GB, and is used for the Couchbase installation directory.  Data & index directories will use /couchbase.  If disk size here is >0, an EBS drive of this size is mounted to /couchbase.  If 0, /couchbase will be created on the root partition.    Some instance types may provide local SSDs.  These are mounted to /ephemeral and will NOT persist across a stop/start cycle.  Set this value to -1 to map /couchbase to local SSDs if available (data will NOT be available after start/stop/restart)."
+    #description "The root (/) partition has 10GB of EBS storage, if you need more, enter a value up to 1024 for EBS disk (\"General Purpose\").  This will automatically be mounted as /couchbase and the nodes configured to use it as their data AND index paths.  Some instances also come with \"ephemeral\" storage but this will NOT be persistent across a stop/start cycle"
 end
 
 parameter "instance_list" do  #template for list of instances
-  type "list"
-  label "Instance type"
-  allowed_values \
+    type "list"
+    label "Instance type"
+    allowed_values \
         "--Compute Optimised--",
         #"c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge",
         "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge",
@@ -66,17 +66,17 @@ parameter "instance_list" do  #template for list of instances
         "r4.xlarge", "r4.2xlarge", "r4.4xlarge", "r4.8xlarge",
         "r5.xlarge", "r5.2xlarge", "r5.4xlarge",
         "r5d.xlarge", "r5d.2xlarge", "r5d.4xlarge", "r5d.12xlarge"
-  default "m4.xlarge"
-  description "Only CentOS/RHEL 7, Amazon Linux and Ubuntu 16 are compatible with gen-5 instance types."
+    default "m4.xlarge"
+    description "Only CentOS/RHEL 7, Amazon Linux and Ubuntu 16 are compatible with gen-5 instance types."
 end
 
 parameter "os" do
-  type "list"
-  label "Operating System"
-  allowed_values "CentOS/RHEL 6.x", "CentOS/RHEL 7.x", "Ubuntu 12", "Ubuntu 14", "Ubuntu 16", "Amazon Linux", "Amazon Linux 2", "RHEL OSE"
-  description "Only CentOS/RHEL 7, Amazon Linux and Ubuntu 16 are compatible with gen-5 instance types. See https://docs.couchbase.com/server/6.0/install/install-platforms.html for supported platforms by version of Couchbase Server/SGW"
-  default "CentOS/RHEL 7.x"
-  operations 'launch'
+    type "list"
+    label "Operating System"
+    allowed_values "CentOS/RHEL 6.x", "CentOS/RHEL 7.x", "Ubuntu 12", "Ubuntu 14", "Ubuntu 16", "Amazon Linux", "Amazon Linux 2", "RHEL OSE"
+    description "Only CentOS/RHEL 7, Amazon Linux and Ubuntu 16 are compatible with gen-5 instance types. See https://docs.couchbase.com/server/6.0/install/install-platforms.html for supported platforms by version of Couchbase Server/SGW"
+    default "CentOS/RHEL 7.x"
+    operations 'launch'
 end
 
 parameter "version" do
@@ -87,59 +87,59 @@ parameter "version" do
   description "6.5.0 Now Available!"
 end
 parameter "cbserver_version" do
-  like $version
+    like $version
 end
 parameter "sg_version" do
-  type "list"
-  label "Couchbase Sync Gateway Version"
-  allowed_values "1.5.0", "2.6.0", "2.7.0"
-  default "2.7.0"
-  description ""
+    type "list"
+    label "Couchbase Sync Gateway Version"
+    allowed_values "1.5.0", "2.6.0", "2.7.0"
+    default "2.7.0"
+    description ""
 end
 parameter "cbsg_version" do
-  like $sg_version
+    like $sg_version
 end
 parameter "cburl" do
-  type "string"
-  label "Couchbase Server URL (overrides above selection)"
-  max_length 1024
-  description "Make sure to use the right URL according to the Operating System chosen below.  For Amazon Linux, use a CentOS 6 RPM."
+    type "string"
+    label "Couchbase Server URL (overrides above selection)"
+    max_length 1024
+    description "Make sure to use the right URL according to the Operating System chosen below.  For Amazon Linux, use a CentOS 6 RPM."
 end
 parameter "cbserver_url" do
-  like $cburl
+    like $cburl
 end
 parameter "sgurl" do
-  type "string"
-  label "Couchbase Sync Gateway URL (overrides above selection)"
-  max_length 1024
-  description "Make sure to use the right URL according to the Operating System chosen below.  For Amazon Linux, use a CentOS 6 RPM."
+    type "string"
+    label "Couchbase Sync Gateway URL (overrides above selection)"
+    max_length 1024
+    description "Make sure to use the right URL according to the Operating System chosen below.  For Amazon Linux, use a CentOS 6 RPM."
 end
 parameter "cbsg_url" do
-  like $sgurl
+    like $sgurl
 end
 
 parameter "indexstorage" do
-  type "list"
-  label "Index Storage mode (non-MDS in 4.5/4.5.x, MDS in 4.6.0+)"
-  allowed_values "default", "memopt"
-  default "default"
-  description "If you need MOI with MDS in pre-4.6.0 you will need to manually configure it after the cluster is initially setup.  Do so by removing all index nodes, changing the setting and re-adding them.  Remember that this is an EE-only feature."
+    type "list"
+    label "Index Storage mode (non-MDS in 4.5/4.5.x, MDS in 4.6.0+)"
+    allowed_values "default", "memopt"
+    default "default"
+    description "If you need MOI with MDS in pre-4.6.0 you will need to manually configure it after the cluster is initially setup.  Do so by removing all index nodes, changing the setting and re-adding them.  Remember that this is an EE-only feature."
 end
 
 parameter "security_group" do
-  type "list"
-  category "Misc Configuration"
-  allowed_values "true", "false"
-  default "false"
-  label "Open all ports - Note that this is considered insecure and no customer or sensitive data should be placed in this environment.  Defaults to all ports blocked except 22/8091/8095/3000/8080"
+    type "list"
+    category "Misc Configuration"
+    allowed_values "true", "false"
+    default "false"
+    label "Open all ports - Note that this is considered insecure and no customer or sensitive data should be placed in this environment.  Defaults to all ports blocked except 22/8091/8095/3000/8080"
 end
 
 parameter "timeout" do
-  type "string"
-  label "Launch timeout in \"d\"ays, \"h\"ours, \"m\"inutes, or \"s\"econds."
-  default "60m"
-  allowed_pattern "\\d+[dhms]"
-  constraint_description "Must match: \"\\d+[dhms]\" i.e 60m"
+    type "string"
+    label "Launch timeout in \"d\"ays, \"h\"ours, \"m\"inutes, or \"s\"econds."
+    default "60m"
+    allowed_pattern "\\d+[dhms]"
+    constraint_description "Must match: \"\\d+[dhms]\" i.e 60m"
 end
 
 #########
@@ -386,24 +386,24 @@ end
 #########
 
 output "guilogin" do
-  label "Cluster GUI Login"
-  category "Demo"
-  default_value "Administrator/password"
+    label "Cluster GUI Login"
+    category "Demo"
+    default_value "Administrator/password"
 end
 output "sshlogin" do
-  label "SSH Login Information User/Pass:"
-  category "Demo"
-  default_value "root/couchbase123!"
+    label "SSH Login Information User/Pass:"
+    category "Demo"
+    default_value "root/couchbase123!"
 end
 output "shutoff" do
-  label "Reminder:"
-  category "Demo"
-  default_value "This demo will shut down automatically 4 hours after starting."
+    label "Reminder:"
+    category "Demo"
+    default_value "This demo will shut down automatically 4 hours after starting."
 end
 output "auto_stop" do
-  label "Reminder:"
-  category "Demo"
-  default_value "This environment will stop automatically each night.  Click the \"Next Action\" and \"Cancel\" to cancel.  Press \"start\" to restart."
+    label "Reminder:"
+    category "Demo"
+    default_value "This environment will stop automatically each night.  Click the \"Next Action\" and \"Cancel\" to cancel.  Press \"start\" to restart."
 end
 
 #########
@@ -412,98 +412,98 @@ end
 
 
 resource 'eip', type: 'ip_address' do
-  name "Couchbase"
-  cloud map($region_mapping, $region, "cloud")
-  domain "vpc"
+    name "Couchbase"
+    cloud map($region_mapping, $region, "cloud")
+    domain "vpc"
 end
 
 resource 'volume', type: 'volume' do
-  name "Couchbase"
-  cloud map($region_mapping, $region, "cloud")
-  datacenter map($region_mapping, $region, "datacenter")
-  volume_type find("gp2")
+    name "Couchbase"
+    cloud map($region_mapping, $region, "cloud")
+    datacenter map($region_mapping, $region, "datacenter")
+    volume_type find("gp2")
 end
 
 resource 'server', type: 'server' do
-  cloud map($region_mapping, $region, "cloud")
-  datacenter map($region_mapping, $region, "datacenter")
-  subnets "VPC"
-  security_groups map($security_group_mapping, $security_group, "security_group")
-  instance_type 'm4.xlarge'
-  ssh_key 'Perry_Couchbase'
-  server_template find('Couchbase Self-Service Template 5.0', revision: 0)
-  cloud_specific_attributes do {
-      "automatic_instance_store_mapping" => "true",
-      "associate_public_ip_address" => "false",
-      "root_volume_type_uid" => "standard"
-  } end
+    cloud map($region_mapping, $region, "cloud")
+    datacenter map($region_mapping, $region, "datacenter")
+    subnets "VPC"
+    security_groups map($security_group_mapping, $security_group, "security_group")
+    instance_type 'm4.xlarge'
+    ssh_key 'Perry_Couchbase'
+    server_template find('Couchbase Self-Service Template 5.0', revision: 0)
+    cloud_specific_attributes do {
+        "automatic_instance_store_mapping" => "true",
+        "associate_public_ip_address" => "false",
+        "root_volume_type_uid" => "standard"
+    } end
 end
 
 
 resource 'node', type: 'server' do
-  cloud map($region_mapping, $region, "cloud")
-  datacenter map($region_mapping, $region, "datacenter")
-  subnets "VPC"
-  security_groups map($security_group_mapping, $security_group, "security_group")
-  instance_type 'm4.xlarge'
-  ssh_key 'Perry_Couchbase'
-  multi_cloud_image_href map($os_mapping, $os, "mci_href")
-  cloud_specific_attributes do {
-      "automatic_instance_store_mapping" => "true",
-      "associate_public_ip_address" => "false",
-      "root_volume_type_uid" => "standard"
-  } end
+    cloud map($region_mapping, $region, "cloud")
+    datacenter map($region_mapping, $region, "datacenter")
+    subnets "VPC"
+    security_groups map($security_group_mapping, $security_group, "security_group")
+    instance_type 'm4.xlarge'
+    ssh_key 'Perry_Couchbase'
+    multi_cloud_image_href map($os_mapping, $os, "mci_href")
+    cloud_specific_attributes do {
+        "automatic_instance_store_mapping" => "true",
+        "associate_public_ip_address" => "false",
+        "root_volume_type_uid" => "standard"
+    } end
 end
 
 resource 'node_spot', type: 'server' do
-  like @node
-  cloud_specific_attributes do {
-      "automatic_instance_store_mapping" => "true",
-      "associate_public_ip_address" => "false",
-      "root_volume_type_uid" => "standard",
-      "pricing_type" => "spot",
-      "max_spot_price" => '2.00',
-  } end
+    like @node
+    cloud_specific_attributes do {
+        "automatic_instance_store_mapping" => "true",
+        "associate_public_ip_address" => "false",
+        "root_volume_type_uid" => "standard",
+        "pricing_type" => "spot",
+        "max_spot_price" => '2.00',
+    } end
 end
 
 resource 'cb_node', type: 'server' do
-  like @node
-  name 'Couchbase Server 4.5'
-  server_template find('Couchbase Server 4.0 - Self-Service', revision: 20)
-  inputs do {
-      'CB_CLUSTERING' => 'text:TRUE',
-  } end
+    like @node
+    name 'Couchbase Server 4.5'
+    server_template find('Couchbase Server 4.0 - Self-Service', revision: 20)
+    inputs do {
+        'CB_CLUSTERING' => 'text:TRUE',
+    } end
 end
 
 resource 'cb_server_node', type: 'server' do
-  like @cb_node
+    like @cb_node
 end
 resource 'cb_sg_node', type: 'server' do
-  like @cb_node
+    like @cb_node
 end
 
 resource 'app_node', type: 'server' do
-  like @node
-  name "Application Node"
-  inputs do {
-      'CB_INSTALL' => 'text:FALSE',
-  } end
-  server_template find('CBSClient 4.0 Travel App', revision: 20)
+    like @node
+    name "Application Node"
+    inputs do {
+        'CB_INSTALL' => 'text:FALSE',
+    } end
+    server_template find('CBSClient 4.0 Travel App', revision: 20)
 end
 
 resource 'cb_node_spot', type: 'server' do
-  like @node_spot
-  name 'Couchbase Server 4.5'
-  server_template find('Couchbase Server 4.0 - Self-Service', revision: 20)
-  inputs do {
-      'CB_CLUSTERING' => 'text:TRUE',
-  } end
+    like @node_spot
+    name 'Couchbase Server 4.5'
+    server_template find('Couchbase Server 4.0 - Self-Service', revision: 20)
+    inputs do {
+        'CB_CLUSTERING' => 'text:TRUE',
+    } end
 end
 
 resource 'app_node_spot', type: 'server' do
-  like @node_spot
-  name 'zApp_node'
-  server_template find('CBSClient 4.0 Travel App', revision: 20)
+    like @node_spot
+    name 'zApp_node'
+    server_template find('CBSClient 4.0 Travel App', revision: 20)
 end
 
 
@@ -513,84 +513,84 @@ end
 
 ##### operation start #######
 operation 'start' do
-  definition 'start'
+    definition 'start'
 end
 define start() do
-  if !$$all_started
-  $$all_started = true
+    if !$$all_started
+        $$all_started = true
 
-  concurrent foreach @server in @@deployment.servers() on_error: skip do
-        if @server.state == 'provisioned'
-          @server.current_instance().start()
-          sleep_until(@server.state == 'operational')
+        concurrent foreach @server in @@deployment.servers() on_error: skip do
+            if @server.state == 'provisioned'
+                @server.current_instance().start()
+                sleep_until(@server.state == 'operational')
+            end
         end
-      end
-  end
+    end
 end
 ############################
 
 ##### operation stop #######
 operation 'stop' do
-  definition 'stop'
+    definition 'stop'
 end
 define stop() do
-  if !$$all_stopped
-  $$all_stopped = true
+    if !$$all_stopped
+        $$all_stopped = true
 
-  concurrent foreach @server in @@deployment.servers() on_error: skip do
-        if @server.state == 'operational'
-          @server.current_instance().stop()
-          sleep_until(@server.state == 'provisioned')
+        concurrent foreach @server in @@deployment.servers() on_error: skip do
+            if @server.state == 'operational'
+                @server.current_instance().stop()
+                sleep_until(@server.state == 'provisioned')
+            end
         end
-      end
-  end
+    end
 end
 ############################
 
 ##### operation enable #######
 operation 'enable' do
-  definition 'generated_enable'
+    definition 'generated_enable'
 end
 
 define generated_enable($shutdown) do
-  call get_current_user_timezone() retrieve $tz
-  $end_time = now() + ($shutdown * 60)
-  $monthly = now() + 2629744
-  @@execution.patch(ends_at: $end_time)
-  call log("Set auto-terminate to: " + to_s($shutdown) + " minutes from now")
+    call get_current_user_timezone() retrieve $tz
+    $end_time = now() + ($shutdown * 60)
+    $monthly = now() + 2629744
+    @@execution.patch(ends_at: $end_time)
+    call log("Set auto-terminate to: " + to_s($shutdown) + " minutes from now")
 
-  rs_ss.scheduled_actions.create(execution_id: @@execution.id, action: "terminate", first_occurrence: $monthly, timezone: $tz, recurrence: "FREQ=MONTHLY;")
-  call log("Set monthly auto-terminate")
+    rs_ss.scheduled_actions.create(execution_id: @@execution.id, action: "terminate", first_occurrence: $monthly, timezone: $tz, recurrence: "FREQ=MONTHLY;")
+    call log("Set monthly auto-terminate")
 
-  rs_ss.scheduled_actions.create(execution_id: @@execution.id, action: "stop", first_occurrence: "2016-01-01T00:00:00+00:00", timezone: $tz, recurrence: "FREQ=DAILY;")
-  call log("Set daily auto-stop")
+    rs_ss.scheduled_actions.create(execution_id: @@execution.id, action: "stop", first_occurrence: "2016-01-01T00:00:00+00:00", timezone: $tz, recurrence: "FREQ=DAILY;")
+    call log("Set daily auto-stop")
 end
 ############################
 
 ##### operation terminate #######
 operation 'terminate' do
-  definition 'terminate'
+    definition 'terminate'
 end
 define terminate() do
-  if !$$all_terminated
-  $$all_terminated = true
-  @servers = @@deployment.servers()
-  sub on_error: skip do
-    @servers.terminate()#delete(@servers)
+    if !$$all_terminated
+        $$all_terminated = true
+        @servers = @@deployment.servers()
+        sub on_error: skip do
+            @servers.terminate()#delete(@servers)
 #            if $_error != null
 #                handle_error("(1) Terminating due to error: " + to_s($_error["message"]) + "\nCheck here for outage status: http://status.rightscale.com/.  \nPerhaps try a new Amazon region and/or instance type.\n\n\n ")
 #            end
-  end
-  end
+        end
+    end
 end
 ############################
 define handle_timeout($task) do
-  call log("Timeout Handled from: " + to_s($task))
-  #raise "Launch timeout. Try increasing timeout length, check outage status: http://status.rightscale.com/ or use a different AWS region/instance type.  Email perry@couchbase.com for more details.\n"
+    call log("Timeout Handled from: " + to_s($task))
+    #raise "Launch timeout. Try increasing timeout length, check outage status: http://status.rightscale.com/ or use a different AWS region/instance type.  Email perry@couchbase.com for more details.\n"
 end
 
 define handle_error($error) do
-  #call log("Handle Error called:\n"+to_s($error)+"\n"+ inspect($_error))
+    #call log("Handle Error called:\n"+to_s($error)+"\n"+ inspect($_error))
 
   #    if $$error_handled
   #
@@ -634,147 +634,147 @@ define handle_error($error) do
 end
 
 define cancel() do
-  call log("Cancel called:"+to_s($_error))
+    call log("Cancel called:"+to_s($_error))
 
-  if !$$all_canceled
-  $$all_canceled = true
+    if !$$all_canceled
+        $$all_canceled = true
 
-  $_error = $_error
-  if $_error != null
-    call handle_error("(3) App Canceled: "+to_s($_error["message"]))
-  end
-  cancel # Cancels all tasks in the entire process
-  end
+        $_error = $_error
+        if $_error != null
+            call handle_error("(3) App Canceled: "+to_s($_error["message"]))
+        end
+        cancel # Cancels all tasks in the entire process
+    end
 end
 define log($message) do
-  if size($message) > 250
-    rs_cm.audit_entries.create(notify: "None", audit_entry: {auditee_href: @@deployment.href, summary: split($message, ":")[0], detail: to_s($message)})
-  else
-    rs_cm.audit_entries.create(notify: "None", audit_entry: {auditee_href: @@deployment.href, summary: to_s($message), detail: to_s($message)})
-  end
+    if size($message) > 250
+        rs_cm.audit_entries.create(notify: "None", audit_entry: {auditee_href: @@deployment.href, summary: split($message, ":")[0], detail: to_s($message)})
+        else
+        rs_cm.audit_entries.create(notify: "None", audit_entry: {auditee_href: @@deployment.href, summary: to_s($message), detail: to_s($message)})
+    end
 end
 
 define validate_port($cluster_port) do
-  if $cluster_port == 4369 || ($cluster_port >= 8092 && $cluster_port <= 8094) || ($cluster_port >= 9100 && $cluster_port <= 9105) || $cluster_port == 9998 || $cluster_port == 9999 || ($cluster_port >= 11209 && $cluster_port <= 11211) || $cluster_port == 11214 || $cluster_port == 11215 || ($cluster_port >= 18091 && $cluster_port <= 18093) || ($cluster_port >= 21100 && $cluster_port <= 21299)
+    if $cluster_port == 4369 || ($cluster_port >= 8092 && $cluster_port <= 8094) || ($cluster_port >= 9100 && $cluster_port <= 9105) || $cluster_port == 9998 || $cluster_port == 9999 || ($cluster_port >= 11209 && $cluster_port <= 11211) || $cluster_port == 11214 || $cluster_port == 11215 || ($cluster_port >= 18091 && $cluster_port <= 18093) || ($cluster_port >= 21100 && $cluster_port <= 21299)
 
-    call handle_error("UI Port is invalid.  Must be >1023, <65536 and not: 4369, 8092 to 8094, 9100 to 9105, 9998, 9999, 11209 to 11211, 11214, 11215, 18091 to 18093, and 21100 to 21299")
-  end
+        call handle_error("UI Port is invalid.  Must be >1023, <65536 and not: 4369, 8092 to 8094, 9100 to 9105, 9998, 9999, 11209 to 11211, 11214, 11215, 18091 to 18093, and 21100 to 21299")
+    end
 end
 
 define get_url($os_mapping, $os, $version, $cburl) return $url do
-#full url =                        <base_url>                                                      / <version url>   / <couchbase-server-enterprise>   <del>    <version/build url>            <os>
-#https://s3.amazonaws.com/packages.couchbase.com/releases/5.5.0-beta/couchbase-server-enterprise-5.5.0-beta-centos7.x86_64.rpm
-#https://s3.amazonaws.com/packages.couchbase.com/releases/5.1.1/couchbase-server-enterprise_5.1.1-debian9_amd64.deb
-#http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/2954/couchbase-server-enterprise-5.5.0-2954-centos7.x86_64.rpm
-#http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/latest/couchbase-server-enterprise-vulcan-centos7.x86_64.rpm
+    #full url =                        <base_url>                                                      / <version url>   / <couchbase-server-enterprise>   <del>    <version/build url>            <os>
+    #https://s3.amazonaws.com/packages.couchbase.com/releases/5.5.0-beta/couchbase-server-enterprise-5.5.0-beta-centos7.x86_64.rpm
+    #https://s3.amazonaws.com/packages.couchbase.com/releases/5.1.1/couchbase-server-enterprise_5.1.1-debian9_amd64.deb
+    #http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/2954/couchbase-server-enterprise-5.5.0-2954-centos7.x86_64.rpm
+    #http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/latest/couchbase-server-enterprise-vulcan-centos7.x86_64.rpm
 
-$version_url = map($os_mapping, $version, "version")
-$base_url = map($os_mapping,$version,"baseurl")
-$build_url = map($os_mapping,$version,"build")
-$delimeter_url = map($os_mapping,$os,"del")
-$os_url = map($os_mapping,$os,"os")
+    $version_url = map($os_mapping, $version, "version")
+    $base_url = map($os_mapping,$version,"baseurl")
+    $build_url = map($os_mapping,$version,"build")
+    $delimeter_url = map($os_mapping,$os,"del")
+    $os_url = map($os_mapping,$os,"os")
 
-if $base_url =~ "s3.amazonaws.com"
-  $url = join([$base_url, $version_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, $os_url])
-end
+    if $base_url =~ "s3.amazonaws.com"
+        $url = join([$base_url, $version_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, $os_url])
+    end
 
-if $base_url =~ "nas.service.couchbase.com"
-  $url = join([$base_url, $build_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, "-",$build_url, $os_url])
-end
+    if $base_url =~ "nas.service.couchbase.com"
+        $url = join([$base_url, $build_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, "-",$build_url, $os_url])
+    end
 
-if $version =~ "latest"
-  $url = join([$base_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, $os_url])
-end
+    if $version =~ "latest"
+        $url = join([$base_url, "/couchbase-server-enterprise", $delimeter_url, $version_url, $os_url])
+    end
 
-if $cburl != ""
-  $url = $cburl
-end
+    if $cburl != ""
+        $url = $cburl
+    end
 end
 
 define get_sg_url($os_mapping, $os, $sg_version, $sg_url) return $url do
-#full url =                        <base_url>                                                      / <version url>   / <couchbase-server-enterprise>   <del>    <version/build url>            <os>
-#eg: <https://s3.amazonaws.com/packages.couchbase.com/releases>                                    /  4.5.0-beta     /  couchbase-server-enterprise    [- _]    4.5.0-beta      -centos6.x86_64.rpm
-#eg: <http://couchbase:north$cale@nas.service.couchbase.com/builds/latestbuilds/couchbase-server>  /  watson/2600    /  couchbase-server-enterprise    [- _]    4.5.0-2600      -centos6.x86_64.rpm
+    #full url =                        <base_url>                                                      / <version url>   / <couchbase-server-enterprise>   <del>    <version/build url>            <os>
+    #eg: <https://s3.amazonaws.com/packages.couchbase.com/releases>                                    /  4.5.0-beta     /  couchbase-server-enterprise    [- _]    4.5.0-beta      -centos6.x86_64.rpm
+    #eg: <http://couchbase:north$cale@nas.service.couchbase.com/builds/latestbuilds/couchbase-server>  /  watson/2600    /  couchbase-server-enterprise    [- _]    4.5.0-2600      -centos6.x86_64.rpm
 
-$version_url = map($os_mapping, $sg_version, "sg_version")
+    $version_url = map($os_mapping, $sg_version, "sg_version")
 
-$url = join([map($os_mapping,$sg_version,"baseurl"), $version_url, "/couchbase-sync-gateway-enterprise",map($os_mapping,$os,"del"),$version_url,map($os_mapping,$os,"os")])
+    $url = join([map($os_mapping,$sg_version,"baseurl"), $version_url, "/couchbase-sync-gateway-enterprise",map($os_mapping,$os,"del"),$version_url,map($os_mapping,$os,"os")])
 
-if $sg_url != ""
-  $url = $sg_url
-end
+    if $sg_url != ""
+        $url = $sg_url
+    end
 end
 
 define get_current_user_timezone() return $tz do
-# Get the preferences for the current user and find the timezone preference
-@prefs = rs_ss.user_preferences.get(filter:["user_id==me"], view:"expanded")
-@prefs = select(@prefs, {"user_preference_info":{"name":"time_zone"}})
+    # Get the preferences for the current user and find the timezone preference
+    @prefs = rs_ss.user_preferences.get(filter:["user_id==me"], view:"expanded")
+    @prefs = select(@prefs, {"user_preference_info":{"name":"time_zone"}})
 
-# Get the value of the timezone if one exists
-if size(@prefs) > 0
-  $tz = @prefs.value
-end
+    # Get the value of the timezone if one exists
+    if size(@prefs) > 0
+        $tz = @prefs.value
+    end
 
-# If there is no value, get the default from the API
-if !$tz
-  @info = rs_ss.user_preference_infos.get(filter:["name==time_zone"])
-  $tz = @info.default_value
-end
+    # If there is no value, get the default from the API
+    if !$tz
+        @info = rs_ss.user_preference_infos.get(filter:["name==time_zone"])
+        $tz = @info.default_value
+    end
 end
 
 define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cluster_ip, $ips, $dns do
 
-$ips = []
-$dns = []
-$cluster_ip = ''
-$error = ''
+    $ips = []
+    $dns = []
+    $cluster_ip = ''
+    $error = ''
 
-$clustered=false;
-$datanodes=0;
-$rebalance_count = 0;
-$mds = false;
+    $clustered=false;
+    $datanodes=0;
+    $rebalance_count = 0;
+    $mds = false;
 
-foreach $group in $groups do
-if $group['nodes'] > 0
-  if $group['clustered'] == "true"
-    $clustered = true
-    $rebalance_count = $rebalance_count + $group['nodes']
+    foreach $group in $groups do
+        if $group['nodes'] > 0
+            if $group['clustered'] == "true"
+                $clustered = true
+                $rebalance_count = $rebalance_count + $group['nodes']
 
-    if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true"
-      $mds = true;
+                if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true"
+                    $mds = true;
+                end
+
+                if $group['data'] == "true"
+                    $datanodes = $datanodes + 1
+                end
+
+                call log("Cluster and Services check:" + to_s($group))
+                if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false"
+                    call handle_error("Must select at least one service for a \"clustered\" node")
+                end
+
+                call log("Version/service compatibility check: "+to_s($url)+" "+to_s($group))
+                if $url =~ "-4." || $url =~ "_4."
+                    if $group['fts'] == "true" || $group['analytics'] == "true" || $group['eventing'] == "true"
+                      call handle_error("FTS, Analytics or Eventing not supported in version 4.x")
+                    end
+                end
+                if $url =~ "-5.0" || $url =~ "_5.0" || $url =~ "-5.1" || $url =~ "_5.1"
+                    if $group['analytics'] == "true" || $group['eventing'] == "true"
+                        call handle_error("Analytics or Eventing not suported before 5.5")
+                    end
+                end
+            end
+
+        end
     end
 
-    if $group['data'] == "true"
-      $datanodes = $datanodes + 1
-    end
-
-    call log("Cluster and Services check:" + to_s($group))
-    if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false"
-      call handle_error("Must select at least one service for a \"clustered\" node")
-    end
-
-    call log("Version/service compatibility check: "+to_s($url)+" "+to_s($group))
-    if $url =~ "-4." || $url =~ "_4."
-      if $group['fts'] == "true" || $group['analytics'] == "true" || $group['eventing'] == "true"
-        call handle_error("FTS, Analytics or Eventing not supported in version 4.x")
-      end
-    end
-    if $url =~ "-5.0" || $url =~ "_5.0" || $url =~ "-5.1" || $url =~ "_5.1"
-      if $group['analytics'] == "true" || $group['eventing'] == "true"
-        call handle_error("Analytics or Eventing not suported before 5.5")
-      end
-    end
-  end
-
-end
-end
-
-call log("Data node in cluster check: "+to_s($clustered)+" "+to_s($datanodes))
+call log("Data node in cluster check: " + to_s($clustered) + " " + to_s($datanodes))
 if $clustered == true && $datanodes == 0
   call handle_error("Must have at least one data node in a cluster, please disable clustering or change the services topology and relaunch")
 end
 
-call log("CE memopt/mds check: "+to_s($url)+" "+to_s($indexstorage)+" "+to_s($mds))
+call log("CE memopt/mds check: " + to_s($url) + " " + to_s($indexstorage) + " " + to_s($mds))
 if $url =~ "community"
   if $indexstorage =~ "memopt"
     call handle_error("Cannot use memopt with CE")
@@ -787,8 +787,8 @@ end
 
 
 
-sub task_label: "Launching "+$rebalance_count+" Node Cluster:" do
-  @cluster = concurrent map $group in $groups return @instances on_error: handle_error("Cluster Launch Error") do
+sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
+  @cluster = concurrent map $group in $groups return @instances on_error : handle_error("Cluster Launch Error") do
     if $group['nodes'] > 0
       if $group['clustered'] == "false"
         $group['services'] = "Blank"
@@ -825,7 +825,7 @@ sub task_label: "Launching "+$rebalance_count+" Node Cluster:" do
       $node_hash['fields']['name'] = "Couchbase Server " + $group['services']
       $node_hash['fields']['inputs']['CB_REBALANCE_COUNT'] = "text:" + $rebalance_count
       if $group['az'] != ""
-        @datacenter = find("datacenters", { name: $group['az'], cloud_href: @cloud.href })
+        @datacenter = find("datacenters", {name: $group['az'], cloud_href: @cloud.href})
         $node_hash['fields']['datacenter_href'] = @datacenter.href
       end
 
@@ -852,67 +852,67 @@ end
 
 define launch_instances($name, $number, $instance_type, $disksize, $node_hash, @eip, $volume_hash, @cloud) return @allnodes do
 
-$error = ''
-sub task_label:"Launching "+to_s($number)+" "+$name+" Nodes" do
-  if $number > 0
-    $partial = 0
+    $error = ''
+    sub task_label:"Launching "+to_s($number)+" "+$name+" Nodes" do
+        if $number > 0
+            $partial = 0
 #            if index($name, "Blank") || index($name, "App")
 #                $partial = 1
 #                call log("Starting a partial launch of " + to_s($number) + " " + $name + " nodes")
 #            else
-    call log("Starting to launch " + to_s($number) + " " + $name + " nodes")
+                call log("Starting to launch " + to_s($number) + " " + $name + " nodes")
 #            end
 #
-    if !($disksize)
-      $disksize = 0
-    end
-    @allnodes = rs_cm.servers.empty();
-    @allnodes = concurrent map $item in [1..$number] return @instance on_error: handle_error("Instance Launch Error:") do
-      #call log("disk size is " + $disksize )
-      concurrent return @server,@eip,@volume do
-      call create_server($node_hash, $instance_type, @cloud) retrieve @server task_label: "Creating Server", on_error: handle_error("Server Launch Error:")
-      sub task_label: "Provisioning EIP", on_error: handle_error("EIP Provision Error:") do
-        provision(@eip)
-      end
-      sub  task_label: "Provisioning Volume", on_error: handle_error("Volume Provision Error:") do
-        if( $disksize > 0)
-          $volume_hash['fields']['size'] = to_s($disksize)
-          @volume = $volume_hash
-          provision(@volume)
+            if !($disksize)
+                $disksize = 0
+            end
+            @allnodes = rs_cm.servers.empty();
+            @allnodes = concurrent map $item in [1..$number] return @instance on_error: handle_error("Instance Launch Error:") do
+                #call log("disk size is " + $disksize )
+                concurrent return @server,@eip,@volume do
+                    call create_server($node_hash, $instance_type, @cloud) retrieve @server task_label: "Creating Server", on_error: handle_error("Server Launch Error:")
+                    sub task_label: "Provisioning EIP", on_error: handle_error("EIP Provision Error:") do
+                            provision(@eip)
+                    end
+                    sub  task_label: "Provisioning Volume", on_error: handle_error("Volume Provision Error:") do
+                        if( $disksize > 0)
+                            $volume_hash['fields']['size'] = to_s($disksize)
+                            @volume = $volume_hash
+                            provision(@volume)
+                        end
+                    end
+                end
+                call log("#" + to_s($item) + " " + $name + " server created, EIP and volume provisioned")
+
+                if !empty?(@eip)
+                    sub task_label: "Creating EIP Binding" do
+                        @eip.ip_address_bindings().create(instance_href: @server.next_instance().href, public_ip_address_href: @eip.href)
+                    end
+                    call log("#" + to_s($item) + " " + $name + " EIP bound")
+                end
+
+                if( $disksize > 0)
+                    sub task_label: "Creating Volume Attachment" do
+                        @volume.recurring_volume_attachments().create(recurring_volume_attachment: {"device": "/dev/sdp", "runnable_href": @server, "storage_href": @volume})
+                    end
+                    call log("#" + to_s($item) + " " + $name + " " + $disksize + "GB volume attached")
+                end
+
+                call launch_server(@server, $name, $partial) retrieve @instance, task_label: "Launching Server"
+                call log("#" + to_s($item) + " " + $name + " server launched, partial="+$partial)
+
+                if !empty?(@eip)
+                    $address = @eip.address
+                    sleep_until( @instance.public_ip_addresses[0] == $address )
+                end
+                @instance = @instance.get()
+                sleep_until( size(@instance.public_dns_names[0]) > 0 )
+                call log("#" + to_s($item) + " " + $name + " IP and DNS discovered: EIP: " + to_s($address) + ", From instance: " + to_s(@instance.public_ip_addresses[0]) + ", " + to_s(@instance.public_dns_names[0]))
+            end
+
+            call log("Finished concurrent map launching " + to_s($number) + " node (" + $name + ")")
         end
-      end
     end
-    call log("#" + to_s($item) + " " + $name + " server created, EIP and volume provisioned")
-
-    if !empty?(@eip)
-      sub task_label: "Creating EIP Binding" do
-        @eip.ip_address_bindings().create(instance_href: @server.next_instance().href, public_ip_address_href: @eip.href)
-      end
-      call log("#" + to_s($item) + " " + $name + " EIP bound")
-    end
-
-    if( $disksize > 0)
-      sub task_label: "Creating Volume Attachment" do
-        @volume.recurring_volume_attachments().create(recurring_volume_attachment: {"device": "/dev/sdp", "runnable_href": @server, "storage_href": @volume})
-      end
-      call log("#" + to_s($item) + " " + $name + " " + $disksize + "GB volume attached")
-    end
-
-    call launch_server(@server, $name, $partial) retrieve @instance, task_label: "Launching Server"
-    call log("#" + to_s($item) + " " + $name + " server launched, partial="+$partial)
-
-    if !empty?(@eip)
-      $address = @eip.address
-      sleep_until( @instance.public_ip_addresses[0] == $address )
-    end
-    @instance = @instance.get()
-    sleep_until( size(@instance.public_dns_names[0]) > 0 )
-    call log("#" + to_s($item) + " " + $name + " IP and DNS discovered: EIP: " + to_s($address) + ", From instance: " + to_s(@instance.public_ip_addresses[0]) + ", " + to_s(@instance.public_dns_names[0]))
-    end
-
-    call log("Finished concurrent map launching " + to_s($number) + " node (" + $name + ")")
-  end
-end
 end
 
 define launch_nodes($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) return $ips, $dns do
@@ -936,20 +936,20 @@ $server_href = to_s(@server.href[])
 @instance = rs_cm.instances.empty()
 
 sub task_label: 'Tagging', on_error: handle_error("Tagging Error:") do
-  $tags=[join(["ec2:rs_deployment=",@@deployment.name]),join(["ec2:server_href=",@server.href[]])]
-  call log("Adding Tag: "+to_s($tags)+" to: "+ to_s(@server.href[]))
+  $tags = [join(["ec2:rs_deployment=", @@deployment.name]), join(["ec2:server_href=", @server.href[]])]
+  call log("Adding Tag: " + to_s($tags) + " to: " + to_s(@server.href[]))
 
   $error = "failed to multi_add"
   rs_cm.tags.multi_add(resource_hrefs: @server.href[], tags: $tags)
-  call log("Added Tag: "+to_s($tags)+" to: "+ to_s(@server.href[]))
+  call log("Added Tag: " + to_s($tags) + " to: " + to_s(@server.href[]))
   task_label('Done adding tags')
 end
-call log("Launching: "+$server_name)
+call log("Launching: " + $server_name)
 
 sub on_error: servers_handle_launch_failure(@server) do
   @instance = @server.launch()
 end
-call log("Done Launching: "+$server_name)
+call log("Done Launching: " + $server_name)
 
 #@server.launch()
 $final_state = "launching"
@@ -961,17 +961,17 @@ sub task_label: 'Waiting for node to boot', on_error: skip do
   else
     $wake_condition = "^(operational|stranded in booting|stopped|provisioned|terminated|terminating|inactive|error)$"
   end
-  call log("Waiting for boot: "+$server_name)
+  call log("Waiting for boot: " + $server_name)
   sleep_until (@server.state =~ $wake_condition)
-  call log("Done booting: "+$server_name)
+  call log("Done booting: " + $server_name)
   $final_state = @server.state
 end
 
-if ( $final_state =~ /^(operational|booting)$/ )
-  @server = rs_cm.get(href: @server.href)  # full refresh
+if ($final_state =~ /^(operational|booting)$/)
+  @server = rs_cm.get(href: @server.href) # full refresh
   @instance = @server.current_instance()
 else
-  call log("Error Detected: "+$server_name)
+  call log("Error Detected: " + $server_name)
   call get_error_audits(@instance) retrieve $detailed_message
 
   $error = "Failed to provision server. Expected state 'operational' or 'booting' but got '" + to_s($final_state) + "' for server: " + to_s($server_name) + " / Href: " + to_s($server_href)
@@ -979,7 +979,7 @@ else
     $error = $error + "\nPotential Errors:\n" + to_s($detailed_message)
   end
 
-  call log("Error logs retrieved: "+$server_name)
+  call log("Error logs retrieved: " + $server_name)
 #        concurrent do
 #            # Update the @server collection before trying to delete so we have updated state.
 #            sub task_name: "wait", task_label: "Deleting Server:" do
@@ -990,65 +990,65 @@ else
 #            sub do
 #         concurrent do
 #                sub do
-  call log("Calling Handle Error For: "+$server_name)
-  call handle_error($error)
+        call log("Calling Handle Error For: "+$server_name)
+        call handle_error($error)
 #                end
 #                abort_task
 
 #        end
-end
+    end
 end
 
 define create_server($node_hash, $instance, @cloud) return @server do
-if $instance != ''
-  $node_hash['fields']['instance_type_href'] = to_s(find("instance_types", { name: $instance, cloud_href: @cloud.href }))
-end
+    if $instance != ''
+        $node_hash['fields']['instance_type_href'] = to_s(find("instance_types", { name: $instance, cloud_href: @cloud.href }))
+    end
 
-$fields = $node_hash['fields']
-@server = rs_cm.servers.create($fields)
+    $fields = $node_hash['fields']
+    @server = rs_cm.servers.create($fields)
 end
 
 define servers_handle_launch_failure(@server) do
-  $error = ''
-  $server_name = @server.name
+    $error = ''
+    $server_name = @server.name
 
-  concurrent return $detailed_message do
-  call get_error_audits(@server) retrieve $detailed_message
+    concurrent return $detailed_message do
+        call get_error_audits(@server) retrieve $detailed_message
 
-  sub on_error: skip do
-    call rs__cwf_terminate(@server)
-  end
-end
+        sub on_error: skip do
+            call rs__cwf_terminate(@server)
+        end
+    end
 
-call rs__cwf_simple_delete(@server)
+    call rs__cwf_simple_delete(@server)
 
-$error = "Error trying to launch server (" + $server_name + ")"
-if $_errors && $_errors[0] && $_errors[0]["response"]
-  $error = $error + ": " + $_errors[0]["response"]["body"]
-end
-if size($detailed_message) > 0
-  $error = $error + "\nPotential Errors:\n" + $detailed_message
-end
-call handle_error($error)
+    $error = "Error trying to launch server (" + $server_name + ")"
+    if $_errors && $_errors[0] && $_errors[0]["response"]
+        $error = $error + ": " + $_errors[0]["response"]["body"]
+    end
+    if size($detailed_message) > 0
+        $error = $error + "\nPotential Errors:\n" + $detailed_message
+    end
+    call handle_error($error)
 end
 
 define get_error_audits(@resource) return $error_audits do
-# The string to return
-$error_audits = ""
+    # The string to return
+    $error_audits = ""
 
-# Get all audit entries in the past 10 minutes (can't filter on terminated instance hrefs, so we do filtering client-side)
-call log("Get Error Audits: Started")
+    # Get all audit entries in the past 10 minutes (can't filter on terminated instance hrefs, so we do filtering client-side)
+    call log("Get Error Audits: Started")
 #    $start_time = strftime(now()-(60*10), "%Y/%m/%d %H:%M:%S +0000")
 #    $end_time = strftime(now(), "%Y/%m/%d %H:%M:%S +0000")
 #    @audits = rs_cm.audit_entries.get(start_date: $start_time, end_date: $end_time, limit: 999)
-$start_time = strftime(now()-(60*10), "%Y/%m/%d %H:%M:%S +0000")
-$end_time = strftime(now(), "%Y/%m/%d %H:%M:%S +0000")
-@audits = rs_cm.audit_entries.get(start_date: $start_time, end_date: $end_time, limit: 999,filter: ["auditee_href=="+ @resource.href])
-call log("Get Error Audits: Retrieved")
-# Can't filter on auditee_href above because of CM-1037
-# Can't use select cause the href is buried
-# Can't call @audit.auditee() because of CM-1037
-# Filter all those audits to find those that apply to this resource
+    $start_time = strftime(now()-(60*10), "%Y/%m/%d %H:%M:%S +0000")
+    $end_time = strftime(now(), "%Y/%m/%d %H:%M:%S +0000")
+    @audits = rs_cm.audit_entries.get(start_date: $start_time, end_date: $end_time, limit: 999,filter: ["auditee_href=="+ @resource.href])
+    call log("Get Error Audits: Retrieved")
+    # Can't filter on auditee_href above because of CM-1037
+    # Can't use select cause the href is buried
+    # Can't call @audit.auditee() because of CM-1037
+    # Filter all those audits to find those that apply to this resource
 #    @filtered_audits = rs_cm.audit_entries.empty()
 #    foreach @audit in @audits do
 #        $audits = to_object(@audit)
@@ -1059,46 +1059,46 @@ call log("Get Error Audits: Retrieved")
 #    end
 #    @audits = @filtered_audits
 
-# Find audits with the words failed or stranded in the summary
-@audits = select(@audits, { "summary": /(failed|stranded)/i })
-foreach @audit in @audits do
-call log("Get Error Audits: Finding (1)")
-# Get the AE details
-$detail = @audit.detail()
-#call log("Get Error Audits: Finding (2)")
-$detail = $detail[0]
-# TODO need to get 'text' if it's a script failure, otherwise don't? maybe?
-#$detail = to_s($audit_detail[0]["text"])
+    # Find audits with the words failed or stranded in the summary
+    @audits = select(@audits, { "summary": /(failed|stranded)/i })
+    foreach @audit in @audits do
+        call log("Get Error Audits: Finding (1)")
+        # Get the AE details
+        $detail = @audit.detail()
+        #call log("Get Error Audits: Finding (2)")
+        $detail = $detail[0]
+        # TODO need to get 'text' if it's a script failure, otherwise don't? maybe?
+        #$detail = to_s($audit_detail[0]["text"])
 
-# If the summary has "Instance: failed", the whole detail message is probably 1 line and is useful
-#call log("Get Error Audits: Finding (3)")
-if @audit.summary =~ /Instance: failed/i
-  $error_audits = $error_audits + "\n    " + $detail
-end
-#call log("Get Error Audits: Finding (4)")
-# If the summary is "stranded" or "boot failed", it likely contains the boot scripts logs, so
-# search through the logs and look for interesting lines
-if @audit.summary =~ /(stranded|boot failed)/i
-  $lines = lines($detail)
-  #call log("Get Error Audits: Finding (5)")
-  foreach $line in $lines do
-  #call log("Get Error Audits: Finding (6)")
-  $script_line = ""
-  # Save the name of the script
-  if index($line, /RS>.*(RightScript:|Running recipe).*$/)
-    $script_line = $line
-  end
-  # Look for some keywords in the line
-  if index($line, /(error|failed|exited with code [1-9]+)/i)
-    # If there is a script name we haven't printed yet, print it
-    if size($script_line) > 0
-      $error_audits = $error_audits + "  " + $script_line
-      $script_line = ""
+        # If the summary has "Instance: failed", the whole detail message is probably 1 line and is useful
+        #call log("Get Error Audits: Finding (3)")
+        if @audit.summary =~ /Instance: failed/i
+            $error_audits = $error_audits + "\n    " + $detail
+        end
+        #call log("Get Error Audits: Finding (4)")
+        # If the summary is "stranded" or "boot failed", it likely contains the boot scripts logs, so
+        # search through the logs and look for interesting lines
+        if @audit.summary =~ /(stranded|boot failed)/i
+            $lines = lines($detail)
+            #call log("Get Error Audits: Finding (5)")
+            foreach $line in $lines do
+                #call log("Get Error Audits: Finding (6)")
+                $script_line = ""
+                # Save the name of the script
+                if index($line, /RS>.*(RightScript:|Running recipe).*$/)
+                    $script_line = $line
+                end
+                # Look for some keywords in the line
+                if index($line, /(error|failed|exited with code [1-9]+)/i)
+                    # If there is a script name we haven't printed yet, print it
+                    if size($script_line) > 0
+                        $error_audits = $error_audits + "  " + $script_line
+                        $script_line = ""
+                    end
+                    $error_audits = $error_audits + "    " + $line
+                end
+            end
+        end
     end
-    $error_audits = $error_audits + "    " + $line
-  end
-end
-end
-end
-call log("Get Error Audits: Done")
+    call log("Get Error Audits: Done")
 end

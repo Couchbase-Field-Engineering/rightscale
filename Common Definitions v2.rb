@@ -765,6 +765,7 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                     end
                 end
             end
+
         end
     end
 

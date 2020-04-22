@@ -116,9 +116,7 @@ ntpdate 0.pool.ntp.org;
 service ntpd start
 service ntp start
 
-
 ####################################
-
 
 #create ephemeral volume-------------
 #undo Amazon Linux
@@ -126,41 +124,54 @@ for i in `ls -d /media/ephemeral*`; do
   umount "$i"
 done
 
+####################################
+# Not sure if the snippet of logic above is used anymore or not
+####################################
 
+# Look for any unmounted devices
 for i in `ls /dev | egrep "xvd|nvme.n" | grep -v xvdp`; do
+  echo $i
   if ! `grep -q $i /proc/mounts`; then
     devices+="/dev/$i "
   fi
 done
 
-mkdir /ephemeral
-mkdir -p /tmp/couchbase/
+# Mount devices if they exist
+if [ -n "$devices" ]; then
+  # Devices exist, proceed to mount at /ephemeral
+  mkdir /ephemeral
+  if [[ "$CB_SERVER_ANALYTICS_DISK" == TRUE ]] && [[ "$CB_SERVER_DISK" == "-1" ]]; then
+    # Analytics enabled for this node, user wants the attached devices to be used as analytics devices
+    echo "Configuring devices for analytics"
+    mkdir -p /tmp/couchbase/
+    for i in $devices; do
+      pvcreate -f $i
+      mkfs.xfs -f $i
 
-if [[ "$CB_SERVER_ANALYTICS_DISK" ]]; then
-  for i in $devices; do
-    pvcreate -f $i
-    mkfs.xfs -f $i
+      dir="/ephemeral/analytics/"`echo $i | awk '{split($0,a,"/"); print a[3]}'`
+      mkdir -p $dir
+      mount -o noatime,nobarrier $i $dir
+      echo "$dir" >> /tmp/couchbase/analytics_devices
+    done
+  else
+    # Otherwise, devices are combined into a logical volume group for /couchbase to be installed to
+    echo "Creating logical volume from attached devices"
+    pvcreate $devices
+    vgcreate vgroup $devices
+    lvcreate --name volume --extents 100%FREE vgroup
 
-    dir="/ephemeral/analytics/"`echo $i | awk '{split($0,a,"/"); print a[3]}'`
-    mkdir -p $dir
-    mount -o noatime,nobarrier $i $dir
-    echo "$dir" >> /tmp/couchbase/analytics_devices
-  done
-else
-  pvcreate -f $devices
-  vgcreate volume $devices
-  lvcreate --name volume --extents 100%FREE volume
-  mkfs.xfs /dev/volume/volume
-  mount -o noatime,nobarrier /dev/volume/volume /ephemeral
+    echo "Mounting volume to /ephemeral"
+    mkfs.xfs /dev/vgroup/volume
+    mount -o noatime,nobarrier /dev/vgroup/volume /ephemeral
+
+    if [[ "$CB_SERVER_DISK" == "-1" ]] || [[ "$devices" == *"nvme1n1"* ]]; then
+      # N.B. some instances attach SSD instead of EBS, this does not persist and so should behave the same as ephemeral
+      # Create symbolic link between /couchbase and /ephemeral
+      ln -s /ephemeral /couchbase
+    fi
+  fi
+  chmod -R 777 /ephemeral/
 fi
-
-if [[ "$CB_SERVER_EPHEMERAL_DISK" ]]; then
-  ln -s /ephemeral /couchbase
-fi
-
-chmod -R 777 /ephemeral/
-
-####################################
 
 if [[ -e /root/.couchbase/system_setup ]]; then
   echo "Don't want to run a second time."
@@ -169,46 +180,17 @@ else
   mkdir -p /root/.couchbase/system_setup
 fi
 
+#Check for EBS Mounted Storage
 mkdir /couchbase
-#decide where to mount /couchbase
-
-if [[ $CB_ROOT_DISK_PATH -eq 0 ]]; then
-  if [[ `ls /dev/xvdp` ]]; then #new volume is mounted
-    mkfs.xfs /dev/xvdp
-    echo "/dev/xvdp /couchbase xfs defaults    0    1" >> /etc/fstab
-    mount -a
-    #mount /dev/xvdp /couchbase
-  fi
-else #root disk path has been set, need to mess with partitions
-  fdisk /dev/xvda <<EOF
-  p
-  n
-  p
-  2
-
-
-
-  p
-  w
-  p
-EOF
-
-  if uname -a | grep el7; then
-    partx -a 2 /dev/xvda
-  else
-    partx -a /dev/xvda
-  fi
-  mkfs.xfs /dev/xvda2
-  echo "/dev/xvda2 /couchbase xfs defaults    0    1" >> /etc/fstab
+if [ -e "/dev/xvdp" ]; then
+  # Mount ebs partition
+  mkfs.xfs /dev/xvdp
+  echo "/dev/xvdp /couchbase xfs defaults,nofail    0    1" >> /etc/fstab
   mount -a
-  #mount /dev/xvda2 /couchbase
 fi
 
-#chmod -R 777 /couchbase/
-#chown -R couchbase:couchbase /couchbase/
-
-
 ####################################
+
 cd /root
 #echo -e "-fqsL" >> .curlrc
 

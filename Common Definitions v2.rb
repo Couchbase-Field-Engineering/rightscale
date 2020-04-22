@@ -40,7 +40,7 @@ parameter "disk_size" do
     #    min_value 0
     max_value 4096
     default 0
-    description "The root partition is always 10GB, and is used for the Couchbase installation directory.  Data & index directories will use /couchbase.  If disk size here is >0, an EBS drive of this size is mounted to /couchbase.  If 0, /couchbase will be created on the root partition.    Some instance types may provide local SSDs.  These are mounted to /ephemeral and will NOT persist across a stop/start cycle.  Set this value to -1 to map /couchbase to local SSDs if available (data will NOT be available after start/stop/restart)."
+    description "The root partition is always 10GB, and is used for the Couchbase installation directory.  Data & index directories will use /couchbase.  If disk size here is >0, an EBS drive of this size is mounted to /couchbase.  If 0, /couchbase will be created on the root partition.    Some instance types may provide local SSDs.  These are mounted to /ephemeral and will NOT persist across a stop/start cycle.  Set this value to -1 to map /couchbase to local SSDs if available (data will NOT be available after start/stop/restart). Please refer to https://aws.amazon.com/ec2/instance-types/ for more information."
     #description "The root (/) partition has 10GB of EBS storage, if you need more, enter a value up to 1024 for EBS disk (\"General Purpose\").  This will automatically be mounted as /couchbase and the nodes configured to use it as their data AND index paths.  Some instances also come with \"ephemeral\" storage but this will NOT be persistent across a stop/start cycle"
 end
 
@@ -320,7 +320,7 @@ mapping "os_mapping" do {
     },
     "Mad-Hatter-latest" => {
       "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/latest",
-      "version" => "mad-hatter-preview"
+      "version" => "mad-hatter"
     },
     "Cheshire-Cat-latest" => {
         "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/latest",

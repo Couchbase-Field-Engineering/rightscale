@@ -766,6 +766,45 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                 end
             end
 
+$clustered = false;
+$datanodes = 0;
+$rebalance_count = 0;
+$mds = false;
+
+foreach $group in $groups do
+if $group['nodes'] > 0
+  if $group['clustered'] == "true"
+    $clustered = true
+    $rebalance_count = $rebalance_count + $group['nodes']
+
+    if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true"
+      $mds = true;
+    end
+
+    if $group['data'] == "true"
+      $datanodes = $datanodes + 1
+    end
+
+    call log("Cluster and Services check:" + to_s($group))
+    if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false"
+      call handle_error("Must select at least one service for a \"clustered\" node")
+    end
+
+    call log("Version/service compatibility check: " + to_s($url) + " " + to_s($group))
+    if $url =~ "-4." || $url =~ "_4."
+      if $group['fts'] == "true" || $group['analytics'] == "true" || $group['eventing'] == "true"
+        call handle_error("FTS, Analytics or Eventing not supported in version 4.x")
+      end
+    end
+    if $url =~ "-5.0" || $url =~ "_5.0" || $url =~ "-5.1" || $url =~ "_5.1"
+      if $group['analytics'] == "true" || $group['eventing'] == "true"
+        call handle_error("Analytics or Eventing not suported before 5.5")
+      end
+    end
+  end
+
+end
+end
 
 call log("Data node in cluster check: " + to_s($clustered) + " " + to_s($datanodes))
 if $clustered == true && $datanodes == 0

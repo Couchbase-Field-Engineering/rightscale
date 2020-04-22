@@ -953,37 +953,6 @@ define launch_instances($name, $number, $instance_type, $disksize, $node_hash, @
     end
 end
 
-    if !empty?(@eip)
-      sub task_label: "Creating EIP Binding" do
-        @eip.ip_address_bindings().create(instance_href: @server.next_instance().href, public_ip_address_href: @eip.href)
-      end
-      call log("#" + to_s($item) + " " + $name + " EIP bound")
-    end
-
-    if ($disksize > 0)
-      sub task_label: "Creating Volume Attachment" do
-        @volume.recurring_volume_attachments().create(recurring_volume_attachment: {"device": "/dev/sdp", "runnable_href": @server, "storage_href": @volume})
-      end
-      call log("#" + to_s($item) + " " + $name + " " + $disksize + "GB volume attached")
-    end
-
-    call launch_server(@server, $name, $partial) retrieve @instance, task_label: "Launching Server"
-    call log("#" + to_s($item) + " " + $name + " server launched, partial=" + $partial)
-
-    if !empty?(@eip)
-      $address = @eip.address
-      sleep_until(@instance.public_ip_addresses[0] == $address)
-    end
-    @instance = @instance.get()
-    sleep_until(size(@instance.public_dns_names[0]) > 0)
-    call log("#" + to_s($item) + " " + $name + " IP and DNS discovered: EIP: " + to_s($address) + ", From instance: " + to_s(@instance.public_ip_addresses[0]) + ", " + to_s(@instance.public_dns_names[0]))
-    end
-
-    call log("Finished concurrent map launching " + to_s($number) + " node (" + $name + ")")
-  end
-end
-end
-
 define launch_nodes($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) return $ips, $dns do
 call launch_instances($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) retrieve @all_nodes
 $dns = []

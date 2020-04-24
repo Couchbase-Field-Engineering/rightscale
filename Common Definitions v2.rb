@@ -66,7 +66,7 @@ parameter "instance_list" do  #template for list of instances
         "r4.xlarge", "r4.2xlarge", "r4.4xlarge", "r4.8xlarge",
         "r5.xlarge", "r5.2xlarge", "r5.4xlarge",
         "r5d.xlarge", "r5d.2xlarge", "r5d.4xlarge", "r5d.12xlarge"
-    default "m4.xlarge"
+    default "m5.xlarge"
     description "Only CentOS/RHEL 7, Amazon Linux and Ubuntu 16 are compatible with gen-5 instance types."
 end
 
@@ -429,7 +429,7 @@ resource 'server', type: 'server' do
     datacenter map($region_mapping, $region, "datacenter")
     subnets "VPC"
     security_groups map($security_group_mapping, $security_group, "security_group")
-    instance_type 'm4.xlarge'
+    instance_type 'm5.xlarge'
     ssh_key 'Perry_Couchbase'
     server_template find('Couchbase Self-Service Template 5.0', revision: 0)
     cloud_specific_attributes do {
@@ -445,7 +445,7 @@ resource 'node', type: 'server' do
     datacenter map($region_mapping, $region, "datacenter")
     subnets "VPC"
     security_groups map($security_group_mapping, $security_group, "security_group")
-    instance_type 'm4.xlarge'
+    instance_type 'm5.xlarge'
     ssh_key 'Perry_Couchbase'
     multi_cloud_image_href map($os_mapping, $os, "mci_href")
     cloud_specific_attributes do {

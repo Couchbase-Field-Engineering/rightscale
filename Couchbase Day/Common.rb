@@ -63,9 +63,13 @@ end
 # Parameters
 #########
 
+########
+# Removed Ireland DC for reliability
+# ######
 parameter "region" do
     type "list"
     label "Region"
+    #removed Ireland DC for reliability
     allowed_values "EC2 Oregon (us-west-2)", "EC2 Virginia (us-east-1)", "EC2 Nor Cal (us-west-1)", "EC2 Singapore (ap-southeast-1)", "EC2 Sao Paulo (sa-east-1)"
     default "EC2 Oregon (us-west-2)"
     operations 'launch'

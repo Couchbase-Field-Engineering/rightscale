@@ -228,6 +228,79 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
   cd couchmart-demo
   
   pip install twisted tornado flask
+
+  if [[ "$CB_ACID_DEMO" == "TRUE" ]]; then
+  
+    #Checkout the ACID version of couchmart
+    echo "Checkout ACID version of couchmart"
+    git checkout acid
+  
+    ####Move out of the couchmart-demo folder
+    cd ..
+
+    ####Determine whether maven has been installed yet
+    echo "Install maven"
+    yum -y -q install maven
+    ####Get the git repo
+    echo "Cloning repo"
+    git clone https://github.com/couchbaselabs/posty
+    cd posty
+    ####Build the snapshot
+    echo "Building snapshot"
+    mvn -q clean package
+    ####Move the snapshot to /var/posty/
+    echo "Moving Jar to /var/posty"
+    jar_name=`ls target/*.jar`
+    mkdir /var/posty
+    mv $jar_name /var/posty
+
+    ####create the application configuration file for RPCACID service
+    touch /var/posty/application.properties
+    echo "server.port=8889
+AWS_NODES=$single_data_host
+USERNAME=Administrator
+PASSWORD=password" > /var/posty/application.properties
+
+    ####create the system service file
+    touch /etc/systemd/system/posty.service
+    echo "[Unit]
+Description=Posty ACID RPC service for Couchbase
+StartLimitIntervalSec=0
+            
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/java -jar /var/posty/posty-0.0.1-SNAPSHOT.jar --spring.config.location=/var/posty/application.properties
+            
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/posty.service
+
+    systemctl daemon-reload
+    systemctl enable posty
+    systemctl start posty
+    
+    ####Move back into the couchmart folder
+    cd ..
+    cd couchmart-demo
+    
+    echo "Editing the Python Web Server configuration for ACID transactions"
+    
+    echo "BUCKET_NAME = \"$CB_BUCKET\"
+AWS_NODES = [\"$single_data_host\"]
+AZURE_NODES = [""]
+AWS = True
+USERNAME = \"Administrator\"
+PASSWORD = \"password\"
+ADMIN_USER = \"Administrator\"
+ADMIN_PASS = \"password\"
+DDOC_NAME = \"orders\"
+VIEW_NAME = \"by_timestamp\"
+ACID = True
+RPC_ADDRESS = \"http://127.0.0.1:8889/submitorder\"" > settings.py
+
+  else
   
   echo "BUCKET_NAME = \"$CB_BUCKET\"
 AWS_NODES = [\"$single_data_host\"]
@@ -238,7 +311,10 @@ PASSWORD = \"password\"
 ADMIN_USER = \"Administrator\"
 ADMIN_PASS = \"password\"
 DDOC_NAME = \"orders\"
-VIEW_NAME = \"by_timestamp\" " > settings.py
+VIEW_NAME = \"by_timestamp\" 
+ACID = False " > settings.py
+
+  fi
 
   python create_dataset.py
   

@@ -1,0 +1,360 @@
+#! /bin/bash -x
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo "$0"
+fi
+
+shopt -s nocasematch
+shopt -s expand_aliases
+exec &> >(tee -ia /var/log/couchbase_right_script.log)
+
+alias echo='{ save_flags="$-"; set +x;} 2> /dev/null; echo_and_restore'
+echo_and_restore() {
+        builtin echo "$*"
+        case "$save_flags" in
+         (*x*)  set -x
+        esac
+}
+
+echo "Running Couchbase Server - App and workload Script:"
+echo `date`
+
+function get_by_tag {
+  tags=""
+  
+  if  `rs_tag -h > /dev/null`; then
+    tags=`rs_tag -q $1`
+  elif `/usr/local/bin/rsc -h > /dev/null`; then  
+    #instances=`/usr/local/bin/rsc --rl10 cm15 by_tag /api/tags/by_tag resource_type=instances tags[]=$1 | tr , \\\n | egrep -o '/api.*?"' | cut -d '"' -f1`
+    instances=`/usr/local/bin/rsc --retry=5 --timeout=60 --rl10 cm15 by_tag /api/tags/by_tag resource_type=instances tags[]=$1 | \
+      tr , \\\n | egrep -o '/api.*?"' | cut -d '"' -f1`
+
+    while read instance; do
+      tags="$tags
+      `/usr/local/bin/rsc --rl10 cm15 by_resource /api/tags/by_resource resource_hrefs[]=$instance --xm .name | \
+      egrep -o \"$1.*?\" | \
+      cut -d '"' -f1 \
+      `"
+    done <<< "$instances"
+  else
+    echo "failed: Can't get tags"
+    exit -1
+  fi
+
+  if [[ "$tags" =~ "failed" ]]; then
+    echo "failed: Error setting tags, exiting"
+  else
+    private_ips=`echo "$tags" | grep -i "$1=" | cut -d '=' -f 2 | cut -d '"' -f 1 | sort | cut -d '-' -f2-`
+    echo "$private_ips"
+  fi
+}
+
+if [[ "$CB_APP_NODE" == "FALSE" ]]; then
+   echo "Not an app node"
+   exit 0
+fi
+
+####Main Execution
+single_data_host="127.0.0.1"
+single_query_host="127.0.0.1"
+single_index_host="127.0.0.1"
+single_fts_host="127.0.0.1"
+indexhosts="127.0.0.1"
+
+if [[ "$CB_WAIT_FOR_CLUSTER" == "TRUE" ]]; then
+  while [[ "$CB_WAIT_FOR_CLUSTER" == "TRUE" ]]; do
+    echo "Searching for rebalance completion of cluster: $CB_CLUSTER_TAG:"
+    rebalanced=$(get_by_tag "rebalance:$CB_CLUSTER_TAG")
+    if [[ "$rebalanced" == "" ]]; then
+      echo "Cluster not yet finished, looping back around"
+      sleep 5
+      continue;
+    fi
+    break
+  done
+fi
+
+echo "Searching for members of cluster: $CB_CLUSTER_TAG:"
+private_ips=$(get_by_tag "couchbase:$CB_CLUSTER_TAG")
+echo "$private_ips"
+      
+if [[ "$private_ips" == "" ]]; then
+  printf "No IP's"
+  exit 0
+fi
+
+
+datahosts=$(while read ip; do
+  if [[ "$ip" =~ "data" ]]
+  then
+    echo "$ip" | cut -d ';' -f1
+  fi
+done <<< "$private_ips")
+  
+queryhosts=$(while read ip; do
+  if [[ "$ip" =~ "query" ]]
+  then
+    echo "$ip" | cut -d ';' -f1
+  fi
+done <<< "$private_ips")
+  
+indexhosts=$(while read ip; do
+  if [[ "$ip" =~ "index" ]]
+  then
+    echo "$ip" | cut -d ';' -f1
+  fi
+done <<< "$private_ips")
+
+ftshosts=$(while read ip; do
+  if [[ "$ip" =~ "fts" ]]
+  then
+    echo "$ip" | cut -d ';' -f1
+  fi
+done <<< "$private_ips")
+
+datahosts=`echo "$datahosts" | sed 's/\ /;/g'`
+echo "Data hosts: $datahosts"
+single_data_host=`echo "$datahosts" | cut -d';' -f 1 | head -n 1`;
+  
+queryhosts=`echo "$queryhosts" | sed 's/\ /;/g'`
+echo "Query hosts: $queryhosts"
+single_query_host=`echo "$queryhosts" | cut -d';' -f 1 | head -n 1`;
+
+indexhosts=`echo "$indexhosts" | sed 's/\ /;/g'`
+echo "Index hosts: $indexhosts"
+single_index_host=`echo "$indexhosts" | cut -d';' -f 1 | head -n 1`;
+
+ftshosts=`echo "$ftshosts" | sed 's/\ /;/g'`
+echo "FTS hosts: $ftshosts"
+single_fts_host=`echo "$ftshosts" | cut -d';' -f 1 | head -n 1`;
+
+#sleep 5;
+
+if [[ "$CB_WAIT_FOR_CLUSTER" == "TRUE" ]]; then
+  while [[ "$CB_WAIT_FOR_CLUSTER" == "TRUE" ]]; do
+    echo "Searching for rebalance status of cluster: $CB_CLUSTER_TAG:"
+    rebalanced=$(curl -u $CB_USER:$CB_PASS http://$single_data_host:$CB_UI_PORT/pools/default/ | grep -o \"rebalanceStatus\":\"none\")
+    if [[ "$rebalanced" == "" ]]; then
+      echo "Cluster not yet finished, looping back around"
+      sleep 5
+      continue;
+    fi
+    break
+  done
+fi
+
+
+echo "Upgrading pip:"
+pip install --upgrade pip
+
+echo "Pip install 'typing':"
+pip install typing
+
+if  [[ "$CB_TRAVEL_DEMO" == "TRUE" ]]; then  
+ 
+  x=''
+  #while [[ "$x" != '[]' ]]; do
+    echo "Creating travel-sample bucket"
+    x=$(curl -u $CB_USER:$CB_PASS http://$single_data_host:$CB_UI_PORT/sampleBuckets/install -d '["travel-sample"]')
+    #curl -s -X POST --data \'[\"travel-sample\"]\' http://$ENV{'CB_USER'}:$ENV{'CB_PASS'}\@localhost:$ENV{'CB_UI_PORT'}/sampleBuckets/install > /dev/null
+    sleep 5;
+  #done
+  
+  while [[ $(curl -u $CB_USER:$CB_PASS http://$single_data_host:$CB_UI_PORT/pools/default/tasks | grep "loadingSampleBucket") ]]; do
+    echo "Travel sample still loading"
+    sleep 5;
+  done
+  
+  echo "Increasing bucket RAM quota to 5000:"
+  x=$(curl -u $CB_USER:$CB_PASS http://$single_data_host:$CB_UI_PORT/pools/default/buckets/travel-sample -d 'ramQuotaMB=5000')
+  sleep 5;
+  
+  #####Create 'hotels' FTS index
+  curl -O https://raw.githubusercontent.com/couchbaselabs/try-cb-python/master/fts-hotels-index.json
+  curl -u $CB_USER:$CB_PASS -T fts-hotels-index.json http://$single_fts_host:8094/api/index/hotels
+  
+  #####Create RBAC user
+  curl -u $CB_USER:$CB_PASS -X PUT http://$single_data_host:$CB_UI_PORT/settings/rbac/users/local/admin -d 'roles=Admin&password=password'
+  
+  
+  echo "Running Travel application:"
+  cd /root
+  
+  git clone https://github.com/couchbaselabs/try-cb-python.git
+  cd try-cb-python
+  git checkout 5.0
+  pip install -r requirements.txt
+  
+  #cat travel.py | \
+  #cat travel.py |   sed s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\\/travel-sample\?username=$CB_USER\'/ | \
+  #  sed s/PASSWORD\ =\ .*/PASSWORD\ =\ \'$CB_PASS\'/ | \
+  #  sed s/localhost/0.0.0.0/ > travel2.py
+    
+  #mv travel2.py travel.py
+  
+  sed -i s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\\/travel-sample\?username=$CB_USER\'/ travel.py
+  sed -i s/PASSWORD\ =\ .*/PASSWORD\ =\ \'$CB_PASS\'/ travel.py
+  sed -i s/localhost/0.0.0.0/ travel.py
+  
+  numindexes=8
+  array=(${indexhosts// / })
+  
+  echo "Waiting for indexes to come online:"
+  while true; do
+    x=$(cbc n1ql -u $CB_USER -P $CB_PASS -U http://$single_query_host:$CB_UI_PORT/travel-sample "select count(*) from system:indexes where state = \"online\"" | awk -F '[{}]' '{print $2}' | cut -d':' -f 2 | head -n1)
+  
+    if [[ "$x" -ge "$numindexes" ]]
+    then
+      break;
+    fi
+    sleep 5
+  done
+  sleep 10
+  
+  echo "Running Travel application:"
+  nohup python travel.py 1>> /var/log/travel_app 2>> /var/log/travel_app.err &
+fi
+
+if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then  
+  echo "Creating bucket $CB_BUCKET:"
+  x=$(curl -u $CB_USER:$CB_PASS http://$single_data_host:$CB_UI_PORT/pools/default/buckets/ -d "name=$CB_BUCKET" -d ramQuotaMB=1000)
+  
+  echo "Running CouchMart Application:"
+  cd /root
+  #git clone https://github.com/couchbaselabs/connect-eu-demo
+  couchmart_repo=""
+  if [[ "CB_ACID_DEMO" == "TRUE" ]]; then
+    git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
+    cd couchmart-demo-acid
+  else
+    git clone https://github.com/couchbaselabs/couchmart-demo
+    cd couchmart-demo
+  fi
+
+  pip install twisted tornado flask
+
+  #####
+  # Install and configure the Couchmart ACID demo
+  #####
+
+  if [[ "$CB_ACID_DEMO" == "TRUE" ]]; then
+  
+    ####Move out of the couchmart-demo folder
+    cd ..
+    ####Determine whether maven has been installed yet
+    echo "Install maven"
+    yum -y -q install maven
+    ####Get the git repo
+    echo "Cloning repo"
+    git clone https://github.com/couchbaselabs/posty
+    cd posty
+    ####Build the snapshot
+    echo "Building snapshot"
+    mvn -q clean package
+    ####Move the snapshot to /var/posty/
+    echo "Moving Jar to /var/posty"
+    jar_name=`ls target/*.jar`
+    mkdir /var/posty
+    mv $jar_name /var/posty
+
+    ####create the application configuration file for RPCACID service
+    touch /var/posty/application.properties
+    echo "server.port=8889
+AWS_NODES=$single_data_host
+USERNAME=Administrator
+PASSWORD=password" > /var/posty/application.properties
+
+    ####create the system service file
+    touch /etc/systemd/system/posty.service
+    echo "[Unit]
+Description=Posty ACID RPC service for Couchbase
+StartLimitIntervalSec=0
+            
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/java -jar /var/posty/posty-0.0.1-SNAPSHOT.jar --spring.config.location=/var/posty/application.properties
+            
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/posty.service
+
+    systemctl daemon-reload
+    systemctl enable posty
+    systemctl start posty
+    
+    ####Move back into the couchmart folder
+    cd ..
+    cd couchmart-demo-acid
+    
+    echo "Editing the Python Web Server configuration for ACID transactions"
+    
+    echo "BUCKET_NAME = \"$CB_BUCKET\"
+AWS_NODES = [\"$single_data_host\"]
+AZURE_NODES = [""]
+AWS = True
+USERNAME = \"Administrator\"
+PASSWORD = \"password\"
+ADMIN_USER = \"Administrator\"
+ADMIN_PASS = \"password\"
+DDOC_NAME = \"orders\"
+VIEW_NAME = \"by_timestamp\"
+ACID = True
+RPC_ADDRESS = \"http://127.0.0.1:8889/submitorder\"" > settings.py
+
+  else
+  
+    #####
+    # Configure Couchmart as usual
+    #####
+    echo "BUCKET_NAME = \"$CB_BUCKET\"
+AWS_NODES = [\"$single_data_host\"]
+AZURE_NODES = [""]
+AWS = True
+USERNAME = \"Administrator\"
+PASSWORD = \"password\"
+ADMIN_USER = \"Administrator\"
+ADMIN_PASS = \"password\"
+DDOC_NAME = \"orders\"
+VIEW_NAME = \"by_timestamp\" 
+ACID = False " > settings.py
+
+  fi
+
+  python create_dataset.py
+  
+  sed -i s/8888/8080/ web-server.py
+  nohup python web-server.py 1>> /var/log/couchmart_app 2>> /var/log/couchmart_app.err &
+fi
+
+if [[ "$CB_QUERY_LOAD" == "TRUE" ]]; then
+  echo "Running N1QL query load:"
+  for i in `echo "$queryhosts" | sed 's/;/ /g'`; do
+      echo "$i";
+      curl -u $CB_USER:$CB_PASS http://$i:8093/query -d 'statement=prepare airline_keys as SELECT * FROM `travel-sample` USE KEYS ["airline_10"]'
+      curl -u $CB_USER:$CB_PASS http://$i:8093/query -d 'statement=prepare airport_index as SELECT * FROM `travel-sample` where airportname like "Calais Dunkerque"'
+  done
+
+  echo '{"prepared":"airline_keys"}' > queries
+  echo '{"prepared":"airport_index"}' >> queries
+
+  nohup cbc-n1qlback -u $CB_USER -P $CB_PASS -U http://$single_query_host:$CB_UI_PORT/$CB_BUCKET -f queries -t $CB_QUERY_THREADS -Dbootstrap_on=http &>> /var/log/n1qlback 2>> /var/log/n1qlback.err >> /var/log/n1qlback &
+fi
+
+if [[ "$CB_KV_LOAD" == "TRUE" ]]; then
+  echo "Running K/V workload"
+
+  if [[ "$CB_WORKLOAD_OVERRIDE" =~ "-" ]];
+  then
+    echo "Running Pillowfight with override: \
+            cbc-pillowfight -u $CB_USER -P $CB_PASS -U "http://$single_data_host/$CB_BUCKET?unsafe_optimize=true" $CB_WORKLOAD_OVERRIDE 2> /var/log/pillowfight.err > /var/log/pillowfight &"
+      nohup cbc-pillowfight -u $CB_USER -P $CB_PASS -U "http://$single_data_host:$CB_UI_PORT/$CB_BUCKET?unsafe_optimize=true" $CB_WORKLOAD_OVERRIDE &>> /var/log/pillowfight 2>> /var/log/pillowfight.err >> /var/log/pillowfight &
+  else
+    echo "Running Pillowfight: \
+            cbc-pillowfight -u $CB_USER -P $CB_PASS -U "http://$single_data_host/$CB_BUCKET?unsafe_optimize=true" -t $CB_THREADS -m $CB_ITEM_SIZE -M $CB_ITEM_SIZE -r 50 -I $CB_ITEMS 2> /var/log/pillowfight.err > /var/log/pillowfight &"
+      nohup cbc-pillowfight -u $CB_USER -P $CB_PASS -U "http://$single_data_host:$CB_UI_PORT/$CB_BUCKET?unsafe_optimize=true" -t $CB_THREADS -m $CB_ITEM_SIZE -M $CB_ITEM_SIZE -r 50 -I $CB_ITEMS &>> /var/log/pillowfight 2>> /var/log/pillowfight.err >> /var/log/pillowfight &
+  fi
+fi
+
+exit 0;

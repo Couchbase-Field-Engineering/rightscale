@@ -222,22 +222,25 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
   echo "Running CouchMart Application:"
   cd /root
   #git clone https://github.com/couchbaselabs/connect-eu-demo
-  git clone  https://github.com/couchbaselabs/couchmart-demo
-  
-  #cd connect-eu-demo
-  cd couchmart-demo
-  
+  couchmart_repo=""
+  if [[ "CB_ACID_DEMO" == "TRUE" ]]; then
+    git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
+    cd couchmart-demo-acid
+  else
+    git clone https://github.com/couchbaselabs/couchmart-demo
+    cd couchmart-demo
+  fi
+
   pip install twisted tornado flask
+
+  #####
+  # Install and configure the Couchmart ACID demo
+  #####
 
   if [[ "$CB_ACID_DEMO" == "TRUE" ]]; then
   
-    #Checkout the ACID version of couchmart
-    echo "Checkout ACID version of couchmart"
-    git checkout acid
-  
     ####Move out of the couchmart-demo folder
     cd ..
-
     ####Determine whether maven has been installed yet
     echo "Install maven"
     yum -y -q install maven
@@ -283,7 +286,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/posty.service
     
     ####Move back into the couchmart folder
     cd ..
-    cd couchmart-demo
+    cd couchmart-demo-acid
     
     echo "Editing the Python Web Server configuration for ACID transactions"
     
@@ -302,7 +305,10 @@ RPC_ADDRESS = \"http://127.0.0.1:8889/submitorder\"" > settings.py
 
   else
   
-  echo "BUCKET_NAME = \"$CB_BUCKET\"
+    #####
+    # Configure Couchmart as usual
+    #####
+    echo "BUCKET_NAME = \"$CB_BUCKET\"
 AWS_NODES = [\"$single_data_host\"]
 AZURE_NODES = [""]
 AWS = True

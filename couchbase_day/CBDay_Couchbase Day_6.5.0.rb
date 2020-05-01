@@ -34,12 +34,6 @@ end
 parameter "region" do
     like $common.region
 end
-parameter "shutdown" do
-    like $common.shutdown
-    default 600
-    min_value 600
-    max_value 600
-end
 parameter "cluster_port" do
     like $common.cluster_port
 end
@@ -47,6 +41,13 @@ parameter "os" do
     like $common.os
     allowed_values "CentOS/RHEL 7.x"
     default "CentOS/RHEL 7.x"
+end
+parameter "shutdown" do
+    type "number"
+    label "Shutdown Timer"
+    description "Overridden to 600, value must be 600"
+    allowed_values 600
+    default 600
 end
 #########
 # Mappings

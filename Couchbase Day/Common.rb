@@ -1,4 +1,4 @@
-ame 'Common Params'
+name 'Common Params'
 rs_ca_ver 20160622
 package "package/common"
 short_description 'CAT file of helper function, parameters, outputs and resources'

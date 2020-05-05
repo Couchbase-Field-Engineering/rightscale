@@ -1,6 +1,6 @@
 name '6.5 Retail Demo - ACID Transactions'
 rs_ca_ver 20161221
-import "package/se_common_acid", as: "import"
+import "package/se_common", as: "import"
 
 
 short_description '

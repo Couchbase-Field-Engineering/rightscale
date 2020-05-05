@@ -94,6 +94,20 @@ resource 'primary_cluster_data_nodes', type: 'server', copies: 3 do
     } end
 end
 
+resource 'primary_cluster_query_index_fts_nodes', type: 'server', copies: 2 do
+    like @import.server
+    name join(["CB Server 6.5.0 Primary Cluster Query/Index/FTS Node ", copy_index()])
+    inputs do {
+        'CB_APP_NODE' => 'text:FALSE',
+        'CB_SG_INSTALL' => 'text:FALSE',
+        'CB_SERVER_INSTALL' => 'text:TRUE',
+        'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
+        'CB_REBALANCE_COUNT' => 'text:3',
+        'CB_SERVICES' => 'text:query,index,fts',
+        'CB_SERVER_CLUSTER' => 'text:TRUE'
+    } end
+end
+
 resource 'secondary_cluster_nodes', type: 'server', copies: 3 do
     like @import.server
     name join(["CB Server 6.5.0 Secondary Cluster Node ", copy_index()])

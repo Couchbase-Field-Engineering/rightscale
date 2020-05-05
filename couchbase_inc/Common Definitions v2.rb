@@ -802,34 +802,6 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
 end
 
 
-    sub task_label: "Launching "+$rebalance_count+" Node Cluster:" do
-        @cluster = concurrent map $group in $groups return @instances on_error: handle_error("Cluster Launch Error") do
-            if $group['nodes'] > 0
-                if $group['clustered'] == "false"
-                    $group['services'] = "Blank"
-                    $node_hash['fields']['inputs']['CB_CLUSTERING'] = 'text:FALSE'
-                    $node_hash['fields']['inputs']['CB_SERVER_CLUSTER'] = 'text:FALSE'
-                else
-                    if $group['data'] == "true"
-                        $group['services'] = $group['services'] + "data,"
-                    end
-                    if $group['query'] == "true"
-                        $group['services'] = $group['services'] + "query,"
-                    end
-                    if $group['index'] == "true"
-                        $group['services'] = $group['services'] + "index,"
-                    end
-                    if $group['fts'] == "true"
-                        $group['services'] = $group['services'] + "fts,"
-                    end
-                    if $group['analytics'] == "true"
-                        $group['services'] = $group['services'] + "analytics,"
-                        $node_hash['fields']['inputs']['CB_SERVER_ANALYTICS_DISK'] = "text:TRUE"
-                    end
-                    if $group['eventing'] == "true"
-                        $group['services'] = $group['services'] + "eventing"
-                    end
-                end
 
 sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
   @cluster = concurrent map $group in $groups return @instances on_error : handle_error("Cluster Launch Error") do

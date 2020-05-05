@@ -1,6 +1,6 @@
 name 'Common Definitions v2'
 rs_ca_ver 20161221
-package "package/se_common_acid"
+package "package/se_common"
 short_description 'CAT file of helper functions'
 
 
@@ -794,7 +794,6 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
         if $indexstorage =~ "memopt"
             call handle_error("Cannot use memopt with CE")
         end
-
 
       if $mds == true
           call handle_error("Cannot use MDS with CE")

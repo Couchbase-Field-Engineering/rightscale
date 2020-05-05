@@ -222,7 +222,6 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
   echo "Running CouchMart Application:"
   cd /root
   #git clone https://github.com/couchbaselabs/connect-eu-demo
-  couchmart_repo=""
   if [[ "CB_ACID_DEMO" == "TRUE" ]]; then
     git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
     cd couchmart-demo-acid

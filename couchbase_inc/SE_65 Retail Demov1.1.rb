@@ -81,7 +81,7 @@ resource 'primary_cluster_data_nodes', type: 'server', copies: 3 do
         'CB_SG_INSTALL' => 'text:FALSE',
         'CB_SERVER_INSTALL' => 'text:TRUE',
         'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
-        'CB_REBALANCE_COUNT' => 'text:3',
+        'CB_REBALANCE_COUNT' => 'text:5',
         'CB_SERVICES' => 'text:data',
         'CB_SERVER_CLUSTER' => 'text:TRUE'
     } end
@@ -95,7 +95,7 @@ resource 'primary_cluster_query_index_fts_nodes', type: 'server', copies: 2 do
         'CB_SG_INSTALL' => 'text:FALSE',
         'CB_SERVER_INSTALL' => 'text:TRUE',
         'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
-        'CB_REBALANCE_COUNT' => 'text:3',
+        'CB_REBALANCE_COUNT' => 'text:5',
         'CB_SERVICES' => 'text:query,index,fts',
         'CB_SERVER_CLUSTER' => 'text:TRUE'
     } end

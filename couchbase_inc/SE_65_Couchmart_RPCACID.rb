@@ -13,7 +13,11 @@ short_description '
 Based on Couchmart demo: https://github.com/couchbaselabs/connect-eu-demo
 Video recording of the demo: https://youtu.be/wzYBILeksU4
 
-Use this for out-of-the-box canned demos.
+This demo aims to mimic the same functionality as the standard Couchmart demo whilst using the ACID transactions feature introduced in 6.5. 
+
+There is an added intermediary service, installed on the app node, which handles requests from the app server and forms an ACID request to CB server. 
+
+This service is named POSTY, it will determine whether there is enough stock of the requested items, decrementing stock and placing an order if all items are available.
 
 A demo enviornment with:
 - 2 clusters (to showcase XDCR), one with MDS
@@ -86,20 +90,6 @@ resource 'primary_cluster_data_nodes', type: 'server', copies: 3 do
         'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
         'CB_REBALANCE_COUNT' => 'text:3',
         'CB_SERVICES' => 'text:data',
-        'CB_SERVER_CLUSTER' => 'text:TRUE'
-    } end
-end
-
-resource 'primary_cluster_query_index_fts_nodes', type: 'server', copies: 2 do
-    like @import.server
-    name join(["CB Server 6.5.0 Primary Cluster Query/Index/FTS Node ", copy_index()])
-    inputs do {
-        'CB_APP_NODE' => 'text:FALSE',
-        'CB_SG_INSTALL' => 'text:FALSE',
-        'CB_SERVER_INSTALL' => 'text:TRUE',
-        'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
-        'CB_REBALANCE_COUNT' => 'text:3',
-        'CB_SERVICES' => 'text:query,index,fts',
         'CB_SERVER_CLUSTER' => 'text:TRUE'
     } end
 end

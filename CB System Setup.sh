@@ -140,7 +140,7 @@ done
 if [ -n "$devices" ]; then
   # Devices exist, proceed to mount at /ephemeral
   mkdir /ephemeral
-  if [[ "$CB_SERVER_ANALYTICS_DISK" == TRUE ]] && [[ "$CB_SERVER_DISK" == "-1" ]]; then
+  if [[ "$CB_SERVER_ANALYTICS_DISK" == TRUE ]]; then
     # Analytics enabled for this node, user wants the attached devices to be used as analytics devices
     echo "Configuring devices for analytics"
     mkdir -p /tmp/couchbase/
@@ -151,7 +151,9 @@ if [ -n "$devices" ]; then
       dir="/ephemeral/analytics/"`echo $i | awk '{split($0,a,"/"); print a[3]}'`
       mkdir -p $dir
       mount -o noatime,nobarrier $i $dir
-      echo "$dir" >> /tmp/couchbase/analytics_devices
+      if [[ "$CB_SERVER_DISK" == "-1" ]]; then
+        echo "$dir" >> /tmp/couchbase/analytics_devices
+      fi
     done
   else
     # Otherwise, devices are combined into a logical volume group for /couchbase to be installed to

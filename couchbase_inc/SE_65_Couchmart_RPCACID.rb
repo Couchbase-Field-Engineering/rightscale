@@ -94,20 +94,6 @@ resource 'primary_cluster_data_nodes', type: 'server', copies: 3 do
     } end
 end
 
-resource 'primary_cluster_query_index_fts_nodes', type: 'server', copies: 2 do
-    like @import.server
-    name join(["CB Server 6.5.0 Primary Cluster Query/Index/FTS Node ", copy_index()])
-    inputs do {
-        'CB_APP_NODE' => 'text:FALSE',
-        'CB_SG_INSTALL' => 'text:FALSE',
-        'CB_SERVER_INSTALL' => 'text:TRUE',
-        'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
-        'CB_REBALANCE_COUNT' => 'text:3',
-        'CB_SERVICES' => 'text:query,index,fts',
-        'CB_SERVER_CLUSTER' => 'text:TRUE'
-    } end
-end
-
 resource 'secondary_cluster_nodes', type: 'server', copies: 3 do
     like @import.server
     name join(["CB Server 6.5.0 Secondary Cluster Node ", copy_index()])
@@ -177,7 +163,7 @@ end
 output "primarycluster" do
     label "Primary Couchbase Cluster:"
     category "Demo"
-    default_value join(['http://',@primary_cluster_query_index_fts_nodes.public_ip_address,':',$cluster_port])
+    default_value join(['http://',@primary_cluster_data_nodes.public_ip_address,':',$cluster_port])
 end
 
 output "primary_sg" do
@@ -256,7 +242,7 @@ operation 'launch' do
     } end
 end
 
-define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @primary_cluster_query_index_fts_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $app_ip, $blank_dns, $sg_ip, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 30m, on_timeout: import.handle_timeout("Launch Timeout") do
+define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $app_ip, $blank_dns, $sg_ip, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 30m, on_timeout: import.handle_timeout("Launch Timeout") do
 
     $app_dns = $blank_dns = $sg_dns = $primary_dns = $secondary_dns = $primary_nodes_dns = $secondary_nodes_dns = []
     $shutdown=240
@@ -283,23 +269,22 @@ define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @
 
     call import.log("Concurrently Launching Nodes")
 
-    concurrent return $app_ips, $blank_dns, $sg_ips, $secondary_nodes_dns, $secondary_nodes_ips, $data_dns, $data_ips, $query_index_fts_dns task_label: "Launching Demo Environment", on_error: import.handle_error("Concurrent Launch Failed:") do
+    concurrent return $app_ips, $blank_dns, $sg_ips, $secondary_nodes_dns, $secondary_nodes_ips, $data_dns, $data_ips task_label: "Launching Demo Environment", on_error: import.handle_error("Concurrent Launch Failed:") do
 
         call launch_nodes_ip_dns("App Nodes",@app_nodes) retrieve $app_ips, $app_dns
         call launch_nodes_ip_dns("Blank Nodes", @blank_nodes) retrieve $blank_ips, $blank_dns
         call launch_nodes_ip_dns("SG Nodes", @sg_nodes) retrieve $sg_ips, $sg_dns
         call launch_nodes_ip_dns("Secondary Cluster Nodes", @secondary_cluster_nodes) retrieve $secondary_nodes_ips, $secondary_nodes_dns
 
-        concurrent return $data_dns, $data_ips, $query_index_fts_dns task_label: "Primary Cluster", on_error: import.handle_error("Concurrent Group Launch Failed:") do
+        concurrent return $data_dns, $data_ips task_label: "Primary Cluster", on_error: import.handle_error("Concurrent Group Launch Failed:") do
             call launch_nodes_ip_dns("Primary Cluster Data Nodes", @primary_cluster_data_nodes) retrieve $data_ips, $data_dns
-            call launch_nodes_ip_dns("Primary Cluster Query/Index/FTS Nodes", @primary_cluster_query_index_fts_nodes) retrieve $query_index_fts_ips, $query_index_fts_dns
         end
     end
 
     $app_ip = $app_ips[0]
     $sg_ip = $sg_ips[0]
     $primary_ip = $data_ips[0]
-    $primary_nodes_dns = $query_index_fts_dns + $data_dns
+    $primary_nodes_dns = $data_dns
     $secondary_ip = $secondary_nodes_ips[0]
 
     call import.log("Finished Launching CloudApp")

@@ -67,8 +67,19 @@ output "couchbase" do
     label "Couchbase 6.5.0 Node 1:"
     category "Demo"
 end
+
+output "couchbase_fqdn" do
+    label "Couchbase 6.5.0 Node 1 FQDN:"
+    category "Demo"
+end
+
 output "client" do
     label "Couchbase 6.5.0 Node 2:"
+    category "Demo"
+end
+
+output "client_fqdn" do
+    label "Couchbase 6.5.0 Node 2 FQDN:"
     category "Demo"
 end
 
@@ -103,10 +114,12 @@ operation 'launch' do
     definition 'generated_launch'
     output_mappings do {
         $couchbase => join(["http://", $cluster_ip,":", $cluster_port]),
-        $client => join(["http://",$app_node_ip,":",$cluster_port])
+        $couchbase_fqdn => $cluster_dns,
+        $client => join(["http://",$app_node_ip,":",$cluster_port]),
+        $client_fqdn => $app_node_dns
     } end
 end
-define generated_launch(@eip,@all_services_node,@app_node, $cluster_port,$shutdown)  return $cluster_ip, $app_node_ip  do
+define generated_launch(@eip,@all_services_node,@app_node, $cluster_port,$shutdown)  return $cluster_ip, $cluster_dns, $app_node_ip, $app_node_dns  do
     $inp = {
         'CB_SHUTDOWN':join(['text:',$shutdown+5]),
         'CB_ROOT_SSH_AUTH':'text:1',
@@ -135,7 +148,7 @@ define generated_launch(@eip,@all_services_node,@app_node, $cluster_port,$shutdo
     $timeout="30m"
 
     sub task_label:"Provisioning infrastructure", on_rollback: common.terminate() do
-        concurrent return  $cluster_ip, $app_node_ip on_error: common.cancel() do
+        concurrent return  $cluster_ip, $cluster_dns, $app_node_ip, $app_node_dns on_error: common.cancel() do
             call common.launch_nodes("Couchbase", 1, 0, @all_services_node, @eip)      retrieve $cluster_ip, $cluster_dns  timeout: $timeout, on_timeout: common.terminate()
             call common.launch_nodes("Application", 1, 0, @app_node, @eip)             retrieve $app_node_ip, $app_node_dns  timeout: $timeout, on_timeout: common.terminate()
         end

@@ -114,9 +114,9 @@ operation 'launch' do
     definition 'generated_launch'
     output_mappings do {
         $couchbase => join(["http://", $cluster_ip,":", $cluster_port]),
-        $couchbase_fqdn => $cluster_dns,
+        $couchbase_fqdn => join([$cluster_dns]),
         $client => join(["http://",$app_node_ip,":",$cluster_port]),
-        $client_fqdn => $app_node_dns
+        $client_fqdn => join([$app_node_dns])
     } end
 end
 define generated_launch(@eip,@all_services_node,@app_node, $cluster_port,$shutdown)  return $cluster_ip, $cluster_dns, $app_node_ip, $app_node_dns  do

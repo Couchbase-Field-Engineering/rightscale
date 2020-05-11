@@ -63,23 +63,23 @@ end
 # Outputs
 #########
 
-output "couchbase" do
-    label "Couchbase 6.5.0 Node 1:"
-    category "Demo"
-end
-
 output "couchbase_fqdn" do
     label "Couchbase 6.5.0 Node 1 FQDN:"
     category "Demo"
 end
 
-output "client" do
-    label "Couchbase 6.5.0 Node 2:"
+output "couchbase" do
+    label "Couchbase 6.5.0 Node 1:"
     category "Demo"
 end
 
 output "client_fqdn" do
     label "Couchbase 6.5.0 Node 2 FQDN:"
+    category "Demo"
+end
+
+output "client" do
+    label "Couchbase 6.5.0 Node 2:"
     category "Demo"
 end
 
@@ -113,10 +113,10 @@ operation 'launch' do
     description 'Launch the application'
     definition 'generated_launch'
     output_mappings do {
-        $couchbase => join(["http://", $cluster_ip,":", $cluster_port]),
-        $couchbase_fqdn => join([$cluster_dns]),
-        $client => join(["http://",$app_node_ip,":",$cluster_port]),
-        $client_fqdn => join([$app_node_dns])
+        $couchbase => join(["http://", $cluster_ip, ":", $cluster_port]),
+        $couchbase_fqdn => join(["http://", $cluster_dns, ":", $cluster_port]),
+        $client => join(["http://",$app_node_ip, ":",$cluster_port]),
+        $client_fqdn => join(["http://", $app_node_dns, ":", $cluster_port])
     } end
 end
 define generated_launch(@eip,@all_services_node,@app_node, $cluster_port,$shutdown)  return $cluster_ip, $cluster_dns, $app_node_ip, $app_node_dns  do

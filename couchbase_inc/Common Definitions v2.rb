@@ -446,7 +446,7 @@ resource 'acidapp', type: 'server' do
     security_groups map($security_group_mapping, $security_group, "security_group")
     instance_type 'm5.xlarge'
     ssh_key 'Perry_Couchbase'
-    server_template find('Couchbase Self-Service Template 5.0 ACID', revision: 0)
+    server_template find('Couchbase Self-Service Template 5.0', revision: 0)
     cloud_specific_attributes do {
         "automatic_instance_store_mapping" => "true",
         "associate_public_ip_address" => "false",

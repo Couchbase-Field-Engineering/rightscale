@@ -444,7 +444,7 @@ resource 'acidapp', type: 'server' do
     datacenter map($region_mapping, $region, "datacenter")
     subnets "VPC"
     security_groups map($security_group_mapping, $security_group, "security_group")
-    instance_type 'm4.xlarge'
+    instance_type 'm5.xlarge'
     ssh_key 'Perry_Couchbase'
     server_template find('Couchbase Self-Service Template 5.0 ACID', revision: 0)
     cloud_specific_attributes do {

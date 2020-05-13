@@ -439,6 +439,21 @@ resource 'server', type: 'server' do
     } end
 end
 
+resource 'acidapp', type: 'server' do
+    cloud map($region_mapping, $region, "cloud")
+    datacenter map($region_mapping, $region, "datacenter")
+    subnets "VPC"
+    security_groups map($security_group_mapping, $security_group, "security_group")
+    instance_type 'm5.xlarge'
+    ssh_key 'Perry_Couchbase'
+    server_template find('Couchbase Self-Service Template 5.0 ACID', revision: 0)
+    cloud_specific_attributes do {
+        "automatic_instance_store_mapping" => "true",
+        "associate_public_ip_address" => "false",
+        "root_volume_type_uid" => "standard"
+    } end
+end
+
 
 resource 'node', type: 'server' do
     cloud map($region_mapping, $region, "cloud")
@@ -769,20 +784,20 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
         end
     end
 
-call log("Data node in cluster check: " + to_s($clustered) + " " + to_s($datanodes))
-if $clustered == true && $datanodes == 0
-  call handle_error("Must have at least one data node in a cluster, please disable clustering or change the services topology and relaunch")
-end
+    call log("Data node in cluster check: "+to_s($clustered)+" "+to_s($datanodes))
+    if $clustered == true && $datanodes == 0
+        call handle_error("Must have at least one data node in a cluster, please disable clustering or change the services topology and relaunch")
+    end
 
-call log("CE memopt/mds check: " + to_s($url) + " " + to_s($indexstorage) + " " + to_s($mds))
-if $url =~ "community"
-  if $indexstorage =~ "memopt"
-    call handle_error("Cannot use memopt with CE")
-  end
+    call log("CE memopt/mds check: "+to_s($url)+" "+to_s($indexstorage)+" "+to_s($mds))
+    if $url =~ "community"
+        if $indexstorage =~ "memopt"
+            call handle_error("Cannot use memopt with CE")
+        end
 
-  if $mds == true
-    call handle_error("Cannot use MDS with CE")
-  end
+      if $mds == true
+          call handle_error("Cannot use MDS with CE")
+      end
 end
 
 
@@ -916,14 +931,14 @@ define launch_instances($name, $number, $instance_type, $disksize, $node_hash, @
 end
 
 define launch_nodes($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) return $ips, $dns do
-call launch_instances($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) retrieve @all_nodes
-$dns = []
-$ips = []
-foreach @node in @all_nodes do
-$dns << @node.public_dns_names[0]
-$ips << @node.public_ip_addresses[0]
-end
-call log("IPs ready for " + to_s($number) + " " + to_s($name) + " nodes: " + to_s($ips) + ", " + to_s($dns))
+    call launch_instances($name, $number, $instance, $disksize, $node_hash, @eip, $volume_hash, @cloud) retrieve @all_nodes
+    $dns = []
+    $ips = []
+    foreach @node in @all_nodes do
+        $dns << @node.public_dns_names[0]
+        $ips << @node.public_ip_addresses[0]
+    end
+    call log("IPs ready for " + to_s($number) + " " + to_s($name) + " nodes: " + to_s($ips) + ", " + to_s($dns))
 end
 
 define launch_server(@server, $name, $partial) return @instance do

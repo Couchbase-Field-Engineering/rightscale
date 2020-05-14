@@ -439,22 +439,6 @@ resource 'server', type: 'server' do
     } end
 end
 
-resource 'acidapp', type: 'server' do
-    cloud map($region_mapping, $region, "cloud")
-    datacenter map($region_mapping, $region, "datacenter")
-    subnets "VPC"
-    security_groups map($security_group_mapping, $security_group, "security_group")
-    instance_type 'm5.xlarge'
-    ssh_key 'Perry_Couchbase'
-    server_template find('Couchbase Self-Service Template 5.0', revision: 0)
-    cloud_specific_attributes do {
-        "automatic_instance_store_mapping" => "true",
-        "associate_public_ip_address" => "false",
-        "root_volume_type_uid" => "standard"
-    } end
-end
-
-
 resource 'node', type: 'server' do
     cloud map($region_mapping, $region, "cloud")
     datacenter map($region_mapping, $region, "datacenter")

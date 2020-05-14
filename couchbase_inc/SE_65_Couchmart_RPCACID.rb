@@ -46,7 +46,7 @@ Standard Demo includes:
 ###########
 
 resource 'app_nodes', type: 'server', copies: 1 do
-    like @import.acidapp
+    like @import.server
     name join(["App Node ", copy_index()])
     inputs do {
         'CB_APP_NODE' => 'text:TRUE',

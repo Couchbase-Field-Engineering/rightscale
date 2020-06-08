@@ -112,6 +112,7 @@ ftshosts=$(while read ip; do
   fi
 done <<< "$private_ips")
 
+datahosts_connection_string=`echo "$datahosts" | sed 's/\ /,/g'`
 datahosts=`echo "$datahosts" | sed 's/\ /;/g'`
 echo "Data hosts: $datahosts"
 single_data_host=`echo "$datahosts" | cut -d';' -f 1 | head -n 1`;
@@ -259,7 +260,7 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     ####create the application configuration file for RPCACID service
     touch /var/posty/application.properties
     echo "server.port=8889
-AWS_NODES=$single_data_host
+AWS_NODES=$datahosts_connection_string
 USERNAME=Administrator
 PASSWORD=password" > /var/posty/application.properties
 
@@ -290,7 +291,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/posty.service
     echo "Editing the Python Web Server configuration for ACID transactions"
     
     echo "BUCKET_NAME = \"$CB_BUCKET\"
-AWS_NODES = [\"$single_data_host\"]
+AWS_NODES = [\"$datahosts_connection_string\"]
 AZURE_NODES = [""]
 AWS = True
 USERNAME = \"Administrator\"
@@ -308,7 +309,7 @@ RPC_ADDRESS = \"http://127.0.0.1:8889/submitorder\"" > settings.py
     # Configure Couchmart as usual
     #####
     echo "BUCKET_NAME = \"$CB_BUCKET\"
-AWS_NODES = [\"$single_data_host\"]
+AWS_NODES = [\"$datahosts_connection_string\"]
 AZURE_NODES = [""]
 AWS = True
 USERNAME = \"Administrator\"

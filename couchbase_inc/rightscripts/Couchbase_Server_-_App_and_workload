@@ -112,7 +112,7 @@ ftshosts=$(while read ip; do
   fi
 done <<< "$private_ips")
 
-datahosts_connection_string=`echo "$datahosts" | sed 's/\ /,/g'`
+datahosts_connection_string=`echo $datahosts | sed 's/\ /","/g'`
 datahosts=`echo "$datahosts" | sed 's/\ /;/g'`
 echo "Data hosts: $datahosts"
 single_data_host=`echo "$datahosts" | cut -d';' -f 1 | head -n 1`;

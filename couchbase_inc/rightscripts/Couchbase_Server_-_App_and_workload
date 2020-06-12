@@ -260,7 +260,7 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     ####create the application configuration file for RPCACID service
     touch /var/posty/application.properties
     echo "server.port=8889
-AWS_NODES=$datahosts_connection_string
+AWS_NODES=\"$datahosts_connection_string\"
 USERNAME=Administrator
 PASSWORD=password" > /var/posty/application.properties
 

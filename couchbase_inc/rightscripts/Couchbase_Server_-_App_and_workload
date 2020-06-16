@@ -112,10 +112,15 @@ ftshosts=$(while read ip; do
   fi
 done <<< "$private_ips")
 
+# multi host connection strings are needed for the Couchmart app and 
+# ACID service (posty). This is to continue demo operation even when
+# nodes are taken offline
+#
 # quotation marks needed for couchmart application
 datahosts_connection_string=`echo $datahosts | sed 's/\ /","/g'`
 # no quotation marks with just commas needed for posty
 acid_datahosts_connection_string=`echo $datahosts | sed 's/\ /,/g'`
+
 datahosts=`echo "$datahosts" | sed 's/\ /;/g'`
 echo "Data hosts: $datahosts"
 single_data_host=`echo "$datahosts" | cut -d';' -f 1 | head -n 1`;

@@ -203,7 +203,7 @@ yum -y -q install python3-pip
     
   #mv travel2.py travel.py
   
-  sed -i s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\\/travel-sample\?username=$CB_USER\'/ travel.py
+  sed -i s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\'/ travel.py
   sed -i s/PASSWORD\ =\ .*/PASSWORD\ =\ \'$CB_PASS\'/ travel.py
   sed -i s/localhost/0.0.0.0/ travel.py
   

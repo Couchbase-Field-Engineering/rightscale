@@ -5,7 +5,7 @@ import "package/se_common", as: "import"
 
 
 short_description '
-**Updated with Sync Gateway 2.7.0**
+**Updated with Sync Gateway 2.7.3**
 
 **Updated with Couchbase Server 6.5.0**
 
@@ -265,7 +265,7 @@ define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @
     call import.get_url($os_mapping, $os, "6.5.0", "") retrieve $cb_url
 
     $cb_url = "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/6226/couchbase-server-enterprise-6.5.1-6226-centos7.x86_64.rpm"
-    $sg_url = "https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.0/couchbase-sync-gateway-enterprise_2.7.0_x86_64.rpm"
+    $sg_url = "https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.3/couchbase-sync-gateway-enterprise_2.7.3_x86_64.rpm"
 
     $inp = {
         'CB_SHUTDOWN':'text:',

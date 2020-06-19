@@ -242,7 +242,7 @@ if  [[ "$CB_TRAVEL_DEMO" == "TRUE" ]]; then
   curl -O https://raw.githubusercontent.com/couchbaselabs/mobile-travel-sample/master/sync-gateway-config-travelsample.json
   #curl -O https://raw.githubusercontent.com/couchbaselabs/mobile-travel-sample/connect_sv/sync-gateway-config-travelsample.json
   cat sync-gateway-config-travelsample.json | \
-     sed s/cb-server/$single_data_host/ | \
+     sed s/localhost/$single_data_host/ | \
      sed s/\"admin\",/\"$CB_USER\",/ | \
      sed s/\"password\",/\"$CB_PASS\",/ \
     > /home/sync_gateway/sync_gateway.json 

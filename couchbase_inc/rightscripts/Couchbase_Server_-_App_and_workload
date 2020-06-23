@@ -161,8 +161,6 @@ pip install typing
 
 if  [[ "$CB_TRAVEL_DEMO" == "TRUE" ]]; then  
 
-yum -y -q install python3-pip
-
   x=''
   #while [[ "$x" != '[]' ]]; do
     echo "Creating travel-sample bucket"
@@ -191,9 +189,32 @@ yum -y -q install python3-pip
   echo "Running Travel application:"
   cd /root
   
+  #Remove python and pip
+  packages="python-pip python-devel"
+  echo "Removing yum packages: $packages"
+  if ! yum  -y --skip-broken remove $packages; then
+    if ! yum  -y --skip-broken remove $packages; then
+      echo "Could not remove packages";
+      exit 1;
+    fi
+  fi
+  
+  #Install python3 and pip3
+  packages="python3-pip python3-devel cmake3 gcc gcc-c++"
+  echo "Installing yum packages: $packages"
+  if ! yum  -y --skip-broken install $packages; then
+    if ! yum  -y --skip-broken install $packages; then
+      echo "Could not install packages";
+      exit 1;
+    fi
+  fi
+  
+  pip3 install --upgrade pip
+  
   git clone https://github.com/couchbaselabs/try-cb-python.git
   cd try-cb-python
   git checkout mobile-travel-sample-tutorial
+  
   pip3 install -r requirements.txt
   
   #cat travel.py | \
@@ -203,7 +224,7 @@ yum -y -q install python3-pip
     
   #mv travel2.py travel.py
   
-  sed -i s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\\/travel-sample\?username=$CB_USER\'/ travel.py
+  sed -i s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\'/ travel.py
   sed -i s/PASSWORD\ =\ .*/PASSWORD\ =\ \'$CB_PASS\'/ travel.py
   sed -i s/localhost/0.0.0.0/ travel.py
   

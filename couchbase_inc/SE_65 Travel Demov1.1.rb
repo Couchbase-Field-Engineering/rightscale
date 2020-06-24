@@ -253,7 +253,7 @@ operation 'launch' do
     } end
 end
 
-define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @primary_cluster_query_index_fts_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $app_ips, $blank_dns, $sg_ips, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 45m, on_timeout: import.handle_timeout("Launch Timeout") do
+define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @primary_cluster_query_index_fts_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $app_ip, $blank_dns, $sg_ip, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 45m, on_timeout: import.handle_timeout("Launch Timeout") do
 
     call import.log("Launching Cloud App")
 

@@ -19,8 +19,8 @@ Build URLs ([Currently active releases](https://hub.internal.couchbase.com/confl
 - [5.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/?C=N;O=D)
 - [6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
 - [6.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
-- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
-- [Magma-Preview](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/?C=N;O=D)
+- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [Cheshire-Cat](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
 '
 
 long_description 'Instructions available [here](http://hub.internal.couchbase.com/confluence/download/attachments/19508199/CBDBaaSInstructions.pdf?version=2&modificationDate=1479988082000&api=v2)
@@ -32,12 +32,12 @@ Choose:
 - [5.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/?C=N;O=D)
 - [6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
 - [6.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
-- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
-- [Magma-Preview](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/?C=N;O=D)
+- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [Cheshire-Cat](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
 - Automatically "stops" every night, this is recurring and can be canceled for each night.  Automatically **terminates** after one month (can also be canceled)
 - Manually stop and start environment, saves all progress. When completely done, please press "Terminate"
 
-**Email perry@couchbase.com with any feedback or problems.**
+**Email daniel.bull@couchbase.com or sam.redman@couchbase.com with any feedback or problems.**
 '
 
 #########

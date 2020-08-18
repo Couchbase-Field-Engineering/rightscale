@@ -82,9 +82,9 @@ end
 parameter "version" do
   type "list"
   label "Couchbase Server Version"
-  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "Mad-Hatter-latest", "Cheshire-Cat-latest", "Magma-Preview-latest"
-  default "6.5.0"
-  description "6.5.0 Now Available!"
+  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "6.6.0", "Magma-Preview-latest"
+  default "6.6.0"
+  description "6.6.0 Now Available!"
 end
 parameter "cbserver_version" do
     like $version
@@ -314,17 +314,13 @@ mapping "os_mapping" do {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "6.5.1"
     },
+    "6.6.0" => {
+        "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
+        "version" => "6.6.0"
+    },
     "Any URL" => {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "url"
-    },
-    "Mad-Hatter-latest" => {
-      "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/latest",
-      "version" => "mad-hatter"
-    },
-    "Cheshire-Cat-latest" => {
-        "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/latest",
-        "version" => "cheshire-cat"
     },
     "Magma-Preview-latest" => {
         "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/latest",
@@ -662,6 +658,7 @@ end
 
 define get_url($os_mapping, $os, $version, $cburl) return $url do
     #full url =                        <base_url>                                                      / <version url>   / <couchbase-server-enterprise>   <del>    <version/build url>            <os>
+    #https://s3.amazonaws.com/packages.couchbase.com/releases/6.6.0/couchbase-server-enterprise-6.6.0-centos7.x86_64.rpm
     #https://s3.amazonaws.com/packages.couchbase.com/releases/5.5.0-beta/couchbase-server-enterprise-5.5.0-beta-centos7.x86_64.rpm
     #https://s3.amazonaws.com/packages.couchbase.com/releases/5.1.1/couchbase-server-enterprise_5.1.1-debian9_amd64.deb
     #http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/2954/couchbase-server-enterprise-5.5.0-2954-centos7.x86_64.rpm

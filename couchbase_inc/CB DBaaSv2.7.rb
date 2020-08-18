@@ -17,8 +17,9 @@ Build URLs ([Currently active releases](https://hub.internal.couchbase.com/confl
 - [4.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/watson/?C=N;O=D)
 - [5.0.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/spock/?C=N;O=D)
 - [5.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/?C=N;O=D)
-- [Alice](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
-- [Mad-Hatter](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
+- [6.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
 - [Magma-Preview](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/?C=N;O=D)
 '
 
@@ -29,8 +30,9 @@ Choose:
 - [4.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/watson/?C=N;O=D)
 - [5.0.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/spock/?C=N;O=D)
 - [5.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/vulcan/?C=N;O=D)
-- [Alice](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
-- [Mad-Hatter](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/alice/?C=N;O=D)
+- [6.5.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/mad-hatter/?C=N;O=D)
+- [6.6.x](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/?C=N;O=D)
 - [Magma-Preview](http://couchbase:YAN3FrT7k@nas.service.couchbase.com/builds/latestbuilds/couchbase-server/magma-preview/?C=N;O=D)
 - Automatically "stops" every night, this is recurring and can be canceled for each night.  Automatically **terminates** after one month (can also be canceled)
 - Manually stop and start environment, saves all progress. When completely done, please press "Terminate"

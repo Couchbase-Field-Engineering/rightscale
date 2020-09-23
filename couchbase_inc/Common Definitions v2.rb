@@ -55,7 +55,7 @@ parameter "instance_list" do  #template for list of instances
         "c5d.large", "c5d.xlarge", "c5d.2xlarge", "c5d.4xlarge", "c5d.9xlarge",
         "--Storage Optimised--",
         #"i2.2xlarge", "i2.4xlarge", "i2.8xlarge",
-        "i3.2xlarge", "i3.4xlarge", "i3.8xlarge",
+        "i3.xlarge", "i3.2xlarge", "i3.4xlarge", "i3.8xlarge",
         "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge",
         "--General Purpose--",
         "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge",

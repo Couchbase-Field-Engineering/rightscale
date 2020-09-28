@@ -258,9 +258,9 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
     cd couchmart-demo-acid
   else
-		git clone https://github.com/couchbaselabs/couchmart-demo
-		cd couchmart-demo
-		if [[ "$CB_SDK" == "3.0" ]]; then
+    git clone https://github.com/couchbaselabs/couchmart-demo
+    cd couchmart-demo
+    if [[ "$CB_SDK" == "3.0" ]]; then
       #Remove python and pip
       packages="python-pip python-devel"
       echo "Removing yum packages: $packages"
@@ -280,12 +280,12 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
           exit 1;
         fi
       fi
-			git checkout sdk-3.0
-			pip3 install --upgrade pip
-			pip3 install -r requirements.txt
-		else
-		  pip install twisted tornado flask
-		fi
+      git checkout sdk-3.0
+      pip3 install --upgrade pip
+      pip3 install -r requirements.txt
+    else
+      pip install twisted tornado flask
+    fi
 
   fi
 

@@ -258,6 +258,7 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
     cd couchmart-demo-acid
   else
+    rm -rf couchmart-demo
     git clone https://github.com/couchbaselabs/couchmart-demo
     cd couchmart-demo
     if [[ "$CB_SDK" == "3.0" ]]; then
@@ -270,13 +271,13 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
           exit 1;
         fi
       fi
-
+  
       #Install python3 and pip3
       packages="python3-pip python3-devel cmake3 gcc gcc-c++"
       echo "Installing yum packages: $packages"
       if ! yum  -y --skip-broken install $packages; then
         if ! yum  -y --skip-broken install $packages; then
-          echo "Could not install packages";
+        echo "Could not install packages";
           exit 1;
         fi
       fi
@@ -286,7 +287,6 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     else
       pip install twisted tornado flask
     fi
-
   fi
 
   #####

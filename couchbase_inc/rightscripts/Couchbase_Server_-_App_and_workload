@@ -258,11 +258,36 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
     git clone https://github.com/couchbaselabs/couchmart-demo-acid.git
     cd couchmart-demo-acid
   else
+    rm -rf couchmart-demo
     git clone https://github.com/couchbaselabs/couchmart-demo
     cd couchmart-demo
+    if [[ "$CB_SDK" == "3.0" ]]; then
+      #Remove python and pip
+      packages="python-pip python-devel"
+      echo "Removing yum packages: $packages"
+      if ! yum  -y --skip-broken remove $packages; then
+        if ! yum  -y --skip-broken remove $packages; then
+          echo "Could not remove packages";
+          exit 1;
+        fi
+      fi
+  
+      #Install python3 and pip3
+      packages="python3-pip python3-devel cmake3 gcc gcc-c++"
+      echo "Installing yum packages: $packages"
+      if ! yum  -y --skip-broken install $packages; then
+        if ! yum  -y --skip-broken install $packages; then
+        echo "Could not install packages";
+          exit 1;
+        fi
+      fi
+      git checkout sdk-3.0
+      pip3 install --upgrade pip
+      pip3 install -r requirements.txt
+    else
+      pip install twisted tornado flask
+    fi
   fi
-
-  pip install twisted tornado flask
 
   #####
   # Install and configure the Couchmart ACID demo
@@ -356,10 +381,16 @@ ACID = False " > settings.py
 
   fi
 
-  python create_dataset.py
-  
   sed -i s/8888/8080/ web-server.py
-  nohup python web-server.py 1>> /var/log/couchmart_app 2>> /var/log/couchmart_app.err &
+
+  if [[ "$CB_SDK" == "3.0" ]]; then
+    python3 create_dataset.py
+    nohup python3 web-server.py 1>> /var/log/couchmart_app 2>> /var/log/couchmart_app.err &
+  else
+    python create_dataset.py
+    nohup python web-server.py 1>> /var/log/couchmart_app 2>> /var/log/couchmart_app.err &
+  fi
+  
 fi
 
 if [[ "$CB_QUERY_LOAD" == "TRUE" ]]; then

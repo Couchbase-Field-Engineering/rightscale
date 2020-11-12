@@ -82,7 +82,7 @@ end
 parameter "version" do
   type "list"
   label "Couchbase Server Version"
-  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "6.6.0", "Cheshire-Cat-latest"
+  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "6.6.0", "Cheshire-Cat-latest", "7.0 Beta-Testing"
   default "6.6.0"
   description "6.6.0 Now Available!"
 end
@@ -325,6 +325,11 @@ mapping "os_mapping" do {
     "Cheshire-Cat-latest" => {
         "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/latest",
         "version" => "cheshire-cat"
+    },
+    "7.0 Beta-Testing" => {
+        "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/",
+        "version" => "7.0.0",
+        "build" => "3445"
     }
 } end
 

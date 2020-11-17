@@ -1,7 +1,7 @@
 
-name 'CB DBaaSv2.7'
+name 'CB DBaaSv2.7 TEST'
 rs_ca_ver 20161221
-import "package/se_common", as: "import"
+import "package/se_common_test", as: "import"
 
 short_description 'Instructions available [here](http://hub.internal.couchbase.com/confluence/download/attachments/19508199/CBDBaaSInstructions.pdf?version=2&modificationDate=1479988082000&api=v2)
 
@@ -163,6 +163,12 @@ parameter "eventing_1" do
     label "Eventing Service (>5.5)"
     default "false"
 end
+parameter "backup_1" do
+    like $data_1
+    label "Backup Service (>=7.0)"
+    default "false"
+end
+
 
 [*2..6].each do |n|
     parameter "nodes_#{n}" do
@@ -208,6 +214,11 @@ end
     end
     parameter "eventing_#{n}" do
         like $eventing_1
+        default "false"
+        category "Nodes #{n}"
+    end
+    parameter "backup_#{n}" do
+        like $backup_1
         default "false"
         category "Nodes #{n}"
     end
@@ -362,7 +373,7 @@ operation 'launch' do
     end
 end
 
-define generated_launch(@app_node, $app_nodes_instance, $app_nodes_disk, $app_nodes, @cb_node, $region, $region_mapping, @eip, @volume, $version, $cb_url, $indexstorage, $os, $os_mapping, $cluster_port, $timeout, $app_nodes, $nodes_1, $disk_1, $instance_1, $clustered_1, $data_1, $query_1, $index_1, $fts_1, $analytics_1, $eventing_1, $nodes_2, $disk_2, $instance_2, $clustered_2, $data_2, $query_2, $index_2, $fts_2, $analytics_2, $eventing_2, $nodes_3, $disk_3, $instance_3, $clustered_3, $data_3, $query_3, $index_3, $fts_3, $analytics_3, $eventing_3, $nodes_4, $disk_4, $instance_4, $clustered_4, $data_4, $query_4, $index_4, $fts_4, $analytics_4, $eventing_4, $nodes_5, $disk_5, $instance_5, $clustered_5, $data_5, $query_5, $index_5, $fts_5, $analytics_5, $eventing_5, $nodes_6, $disk_6, $instance_6, $clustered_6, $data_6, $query_6, $index_6, $fts_6, $analytics_6, $eventing_6) return $cluster_ip, $app_nodes_dns, $all_nodes_dns on_error: import.handle_error("Launch Error"), timeout: $timeout, on_timeout: import.handle_timeout("Launch Timeout") do
+define generated_launch(@app_node, $app_nodes_instance, $app_nodes_disk, $app_nodes, @cb_node, $region, $region_mapping, @eip, @volume, $version, $cb_url, $indexstorage, $os, $os_mapping, $cluster_port, $timeout, $app_nodes, $nodes_1, $disk_1, $instance_1, $clustered_1, $data_1, $query_1, $index_1, $fts_1, $analytics_1, $eventing_1, $backup_1, $nodes_2, $disk_2, $instance_2, $clustered_2, $data_2, $query_2, $index_2, $fts_2, $analytics_2, $eventing_2, $backup_2, $nodes_3, $disk_3, $instance_3, $clustered_3, $data_3, $query_3, $index_3, $fts_3, $analytics_3, $backup_3, $eventing_3, $nodes_4, $disk_4, $instance_4, $clustered_4, $data_4, $query_4, $index_4, $fts_4, $analytics_4, $eventing_4, $backup_4, $nodes_5, $disk_5, $instance_5, $clustered_5, $data_5, $query_5, $index_5, $fts_5, $analytics_5, $eventing_5, $backup_5, $nodes_6, $disk_6, $instance_6, $clustered_6, $data_6, $query_6, $index_6, $fts_6, $analytics_6, $eventing_6, $backup_6) return $cluster_ip, $app_nodes_dns, $all_nodes_dns on_error: import.handle_error("Launch Error"), timeout: $timeout, on_timeout: import.handle_timeout("Launch Timeout") do
 
     call import.validate_port($cluster_port)
     call import.get_url($os_mapping, $os, $version, $cb_url) retrieve $cb_url
@@ -446,12 +457,12 @@ define generated_launch(@app_node, $app_nodes_instance, $app_nodes_disk, $app_no
 
                 sub task_name: "cluster", on_error: import.handle_error("Cluster Launch Error:") do
                     $groups = [
-                        {"name": "Group 1", "nodes": $nodes_1, "disk": $disk_1, "instance": $instance_1, "clustered": $clustered_1, "data": $data_1, "query":$query_1, "index":$index_1, "fts": $fts_1, "analytics": $analytics_1, "eventing": $eventing_1, "services":''},
-                        {"name": "Group 2", "nodes": $nodes_2, "disk": $disk_2, "instance": $instance_2, "clustered": $clustered_2, "data": $data_2, "query":$query_2, "index":$index_2, "fts": $fts_2, "analytics": $analytics_2, "eventing": $eventing_2, "services":''},
-                        {"name": "Group 3", "nodes": $nodes_3, "disk": $disk_3, "instance": $instance_3, "clustered": $clustered_3, "data": $data_3, "query":$query_3, "index":$index_3, "fts": $fts_3, "analytics": $analytics_3, "eventing": $eventing_3, "services":''},
-                        {"name": "Group 4", "nodes": $nodes_4, "disk": $disk_4, "instance": $instance_4, "clustered": $clustered_4, "data": $data_4, "query":$query_4, "index":$index_4, "fts": $fts_4, "analytics": $analytics_4, "eventing": $eventing_4, "services":''},
-                        {"name": "Group 5", "nodes": $nodes_5, "disk": $disk_5, "instance": $instance_5, "clustered": $clustered_5, "data": $data_5, "query":$query_5, "index":$index_5, "fts": $fts_5, "analytics": $analytics_5, "eventing": $eventing_5, "services":''},
-                        {"name": "Group 6", "nodes": $nodes_6, "disk": $disk_6, "instance": $instance_6, "clustered": $clustered_6, "data": $data_6, "query":$query_6, "index":$index_6, "fts": $fts_6, "analytics": $analytics_6, "eventing": $eventing_6, "services":''}
+                        {"name": "Group 1", "nodes": $nodes_1, "disk": $disk_1, "instance": $instance_1, "clustered": $clustered_1, "data": $data_1, "query": $query_1, "index": $index_1, "fts": $fts_1, "analytics": $analytics_1, "eventing": $eventing_1, "backup": $backup_1, "services":''},
+                        {"name": "Group 2", "nodes": $nodes_2, "disk": $disk_2, "instance": $instance_2, "clustered": $clustered_2, "data": $data_2, "query": $query_2, "index": $index_2, "fts": $fts_2, "analytics": $analytics_2, "eventing": $eventing_2, "backup": $backup_2, "services":''},
+                        {"name": "Group 3", "nodes": $nodes_3, "disk": $disk_3, "instance": $instance_3, "clustered": $clustered_3, "data": $data_3, "query": $query_3, "index": $index_3, "fts": $fts_3, "analytics": $analytics_3, "eventing": $eventing_3, "backup": $backup_3, "services":''},
+                        {"name": "Group 4", "nodes": $nodes_4, "disk": $disk_4, "instance": $instance_4, "clustered": $clustered_4, "data": $data_4, "query": $query_4, "index": $index_4, "fts": $fts_4, "analytics": $analytics_4, "eventing": $eventing_4, "backup": $backup_4, "services":''},
+                        {"name": "Group 5", "nodes": $nodes_5, "disk": $disk_5, "instance": $instance_5, "clustered": $clustered_5, "data": $data_5, "query": $query_5, "index": $index_5, "fts": $fts_5, "analytics": $analytics_5, "eventing": $eventing_5, "backup": $backup_5, "services":''},
+                        {"name": "Group 6", "nodes": $nodes_6, "disk": $disk_6, "instance": $instance_6, "clustered": $clustered_6, "data": $data_6, "query": $query_6, "index": $index_6, "fts": $fts_6, "analytics": $analytics_6, "eventing": $eventing_6, "backup": $backup_6, "services":''}
                     ]
                     call import.log("Launching Cluster: " + to_s($groups))
                     $node_hash = $cb_node_hash

@@ -1,7 +1,7 @@
 
-name 'CB DBaaSv2.7 TEST'
+name 'CB DBaaSv2.7'
 rs_ca_ver 20161221
-import "package/se_common_test", as: "import"
+import "package/se_common", as: "import"
 
 short_description 'Instructions available [here](http://hub.internal.couchbase.com/confluence/download/attachments/19508199/CBDBaaSInstructions.pdf?version=2&modificationDate=1479988082000&api=v2)
 

@@ -1,6 +1,6 @@
-name 'Common Definitions v2 test'
+name 'Common Definitions v2'
 rs_ca_ver 20161221
-package "package/se_common_test"
+package "package/se_common"
 short_description 'CAT file of helper functions'
 
 

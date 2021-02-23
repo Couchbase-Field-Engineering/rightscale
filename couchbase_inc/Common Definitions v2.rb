@@ -741,7 +741,7 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                 $clustered = true
                 $rebalance_count = $rebalance_count + $group['nodes']
 
-                if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true"
+                if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true" || $group['backup'] != "true"
                     $mds = true;
                 end
 
@@ -750,19 +750,24 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                 end
 
                 call log("Cluster and Services check:" + to_s($group))
-                if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false"
+                if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false" & $group['backup'] == "false"
                     call handle_error("Must select at least one service for a \"clustered\" node")
                 end
 
                 call log("Version/service compatibility check: "+to_s($url)+" "+to_s($group))
                 if $url =~ "-4." || $url =~ "_4."
-                    if $group['fts'] == "true" || $group['analytics'] == "true" || $group['eventing'] == "true"
-                      call handle_error("FTS, Analytics or Eventing not supported in version 4.x")
+                    if $group['fts'] == "true" || $group['analytics'] == "true" || $group['eventing'] == "true" || $group['backup'] == "true"
+                      call handle_error("FTS, Analytics, Eventing or Backup not supported in version 4.x")
                     end
                 end
                 if $url =~ "-5.0" || $url =~ "_5.0" || $url =~ "-5.1" || $url =~ "_5.1"
-                    if $group['analytics'] == "true" || $group['eventing'] == "true"
-                        call handle_error("Analytics or Eventing not suported before 5.5")
+                    if $group['analytics'] == "true" || $group['eventing'] == "true" || $group['backup'] == "true"
+                        call handle_error("Analytics, Eventing or Backup not suported before 5.5")
+                    end
+                end
+                if $url =~ "-6.0" || $url =~ "_6.0" || $url =~ "-6.5" || $url =~ "_6.5" || $url =~ "-6.6" || $url =~ "_6.6"
+                    if $group['backup'] == "true"
+                        call handle_error("Backup Service not supported before 7.0")
                     end
                 end
             end
@@ -784,7 +789,7 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
       if $mds == true
           call handle_error("Cannot use MDS with CE")
       end
-end
+    end
 
 
 
@@ -813,7 +818,10 @@ sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
           $node_hash['fields']['inputs']['CB_SERVER_ANALYTICS_DISK'] = "text:TRUE"
         end
         if $group['eventing'] == "true"
-          $group['services'] = $group['services'] + "eventing"
+          $group['services'] = $group['services'] + "eventing,"
+        end
+        if $group['backup'] == "true"
+          $group['services'] = $group['services'] + "backup"
         end
       end
 

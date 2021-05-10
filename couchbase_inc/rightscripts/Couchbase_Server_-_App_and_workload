@@ -284,8 +284,9 @@ if  [[ "$CB_COUCHMART_DEMO" == "TRUE" ]]; then
       git checkout sdk-3.0
       pip3 install --upgrade pip
       pip3 install -r requirements.txt
+      pip3 install typing-extensions==3.7.4.3
     else
-      pip install twisted tornado flask
+      pip install twisted tornado flask typing-extensions==3.7.4.3
     fi
   fi
 

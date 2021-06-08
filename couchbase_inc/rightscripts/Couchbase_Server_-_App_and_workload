@@ -216,6 +216,7 @@ if  [[ "$CB_TRAVEL_DEMO" == "TRUE" ]]; then
   git checkout mobile-travel-sample-tutorial
   
   pip3 install -r requirements.txt
+  pip3 install typing-extensions==3.7.4.3
   
   #cat travel.py | \
   #cat travel.py |   sed s/CONNSTR\ =\ .*/CONNSTR\ =\ \'couchbase:\\/\\/$single_query_host\\/travel-sample\?username=$CB_USER\'/ | \
@@ -244,6 +245,7 @@ if  [[ "$CB_TRAVEL_DEMO" == "TRUE" ]]; then
   sleep 10
   
   echo "Running Travel application:"
+  python3 -m pip install -r requirements.txt
   nohup python3 travel.py 1>> /var/log/travel_app 2>> /var/log/travel_app.err &
 fi
 

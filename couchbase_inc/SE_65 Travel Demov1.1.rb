@@ -200,7 +200,7 @@ end
 output "travelapp" do
     label "Travel Application:"
     category "Demo"
-    default_value join(['http://',@app_nodes.public_ip_address,':8080'])
+    default_value join(['http://',@app_nodes.public_ip_address,':8080/index.html'])
 end
 
 output "guilogin" do
@@ -245,7 +245,7 @@ operation 'launch' do
     output_mappings do {
         $primarycluster => join(["http://",$primary_ip,":", $cluster_port]),
         $secondarycluster => join(["http://",$secondary_ip,":", $cluster_port]),
-        $travelapp => join(["http://",$app_ip,":8080"]),
+        $travelapp => join(["http://",$app_ip,":8080/index.html"]),
         $primary_sg => join(["http://",$sg_ip,":4984/travel-sample (user 'admin', password 'password')"]),
         $blank_nodes => $blank_dns,
         $primary_nodes => $primary_nodes_dns,

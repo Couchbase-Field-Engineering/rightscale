@@ -1,4 +1,4 @@
-name 'Mobile Workshop'
+name 'Mobile Travel Sample Workshop'
 rs_ca_ver 20161221
 import "package/common_params", as: "params"
 import "package/common_outputs", as: "outs"
@@ -28,7 +28,7 @@ end
 
 resource 'group_1', type: 'server', copies: 1 do
     like @server
-    name join(["CB Server 6.5.0 and SG 2.7.0 ", copy_index()])
+    name join(["CB Server 7.0.0 and SG 2.7.3 ", copy_index()])
     inputs do {
         'CB_APP_NODE' => 'text:TRUE',
         'CB_SERVER_INSTALL' => 'text:TRUE',
@@ -44,7 +44,7 @@ end
 
 resource 'group_2', type: 'server', copies: 3 do
     like @server
-    name join(["CB Server 6.0.1 Node ", copy_index()])
+    name join(["CB Server 7.0.0 Node ", copy_index()])
     inputs do {
         'CB_SERVER_INSTALL' => 'text:TRUE',
         'CB_CLUSTERNAME' => join(['text:',first(split(@@deployment.name,"-"))]),
@@ -56,7 +56,7 @@ end
 
 resource 'group_3', type: 'server', copies: 2 do
     like @server
-    name join(["CB SG 2.7.0 Node ", copy_index()])
+    name join(["CB SG 2.7.3 Node ", copy_index()])
     inputs do {
         'CB_SERVER_INSTALL' => 'text:FALSE',
         'CB_SG_INSTALL' => 'text:TRUE',
@@ -97,7 +97,7 @@ parameter "shutdown" do
     like $params.shutdown
     default 600
     min_value 600
-    max_value 600
+    max_value 2160
 end
 
 
@@ -153,7 +153,7 @@ end
 output "travelapp" do
     label "Travel Application:"
     category "Develop"
-    default_value join(['http://',@group_1.public_ip_address,':8080'])
+    default_value join(['http://',@group_1.public_ip_address,':8080/index.html'])
 end
 
 output "guilogin" do
@@ -204,7 +204,7 @@ operation 'launch' do
     output_mappings do {
         $singlenode_server => join(["http://",$single_node,":", $cluster_port]),
         $singlenode_sg => join(["http://",$single_node,":", $sg_port]),
-        $travelapp => join(["http://",$single_node,":8080"]),
+        $travelapp => join(["http://",$single_node,":8080/index.html"]),
         $secondarycluster => $secondary_cluster_dns,
         $secondary_sg => $sg_dns,
     } end
@@ -222,8 +222,8 @@ define generated_launch(@server, @group_1, @group_2, @group_3, $cluster_port, $s
     $inp = {
         'CB_SHUTDOWN':'text:',
         'CB_INDEX_MODE':join(['text:',$indexstorage]),
-        'CB_SERVER_URL':'text:https://packages.couchbase.com/releases/6.5.0/couchbase-server-enterprise-6.5.0-centos7.x86_64.rpm',
-        'CB_SG_URL' : 'text:https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.0/couchbase-sync-gateway-enterprise_2.7.0_x86_64.rpm',
+        'CB_SERVER_URL':'text:https://packages.couchbase.com/releases/7.0.0/couchbase-server-enterprise-7.0.0-centos7.x86_64.rpm',
+        'CB_SG_URL' : 'text:https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.3/couchbase-sync-gateway-enterprise_2.7.3_x86_64.rpm',
         'CB_UI_PORT':join(['text:',$cluster_port])
     }
 

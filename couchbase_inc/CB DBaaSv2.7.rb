@@ -1,7 +1,7 @@
 
 name 'CB DBaaSv2.7'
 rs_ca_ver 20161221
-import "package/se_common", as: "import"
+import "package/se_common_v3", as: "import"
 
 short_description 'Instructions available [here](http://hub.internal.couchbase.com/confluence/download/attachments/19508199/CBDBaaSInstructions.pdf?version=2&modificationDate=1479988082000&api=v2)
 
@@ -396,7 +396,7 @@ define generated_launch(@app_node, $app_nodes_instance, $app_nodes_disk, $app_no
         'CB_SHUTDOWN':'text:',
         #        'CB_BUCKET':'text:travel-sample',
         #        'CB_CONFIG1_BUCKET_NAMES':'text:travel-sample',
-        #        'CB_CONFIG2_BUCKET_TYPES':'text:couchbase',
+        #        'CB_CONFIG2_BUCKET_TYPES':'text:x',
         #        'CB_CONFIG3_BUCKET_AUTH':'text:sasl',
         #        'CB_CONFIG4_BUCKET_PASSWORD_OR_PORT':'text:""',
         #        'CB_CONFIG5_BUCKET_RAM':'text:-1',

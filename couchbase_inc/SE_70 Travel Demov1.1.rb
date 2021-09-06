@@ -1,4 +1,4 @@
-name '7.0 Travel-Sample Demo'
+name '7.0 Travel-Sample Demo_perry_test'
 rs_ca_ver 20161221
 
 import "package/se_common_v3", as: "import"
@@ -61,6 +61,21 @@ resource 'sg_nodes', type: 'server', copies: 1 do
         'CB_SG_CLUSTER' => 'text:TRUE',
         'CB_WAIT_FOR_CLUSTER' => 'text:TRUE',
         'CB_TRAVEL_DEMO' => 'text:TRUE'
+    } end
+end
+
+resource 'sg_and_app_nodes', type: 'server', copies: 1 do
+    like @import.server
+    name join(["CB Sync Gateway 2.7 and App", copy_index()])
+    inputs do {
+        'CB_APP_NODE' => 'text:TRUE',
+        'CB_WAIT_FOR_CLUSTER' => 'text:TRUE',
+        'CB_QUERY_LOAD' => 'text:TRUE',
+        'CB_KV_LOAD' => 'text:TRUE',
+        'CB_WORKLOAD_OVERRIDE' => join(['text:',$workload_override]),
+        'CB_TRAVEL_DEMO' => 'text:TRUE',
+        'CB_SG_INSTALL' => 'text:TRUE',
+        'CB_SG_CLUSTER' => 'text:TRUE',
     } end
 end
 
@@ -182,7 +197,8 @@ end
 output "primary_sg" do
     label "Sync Gateway:"
     category "Demo"
-    default_value join(["http://",@sg_nodes.public_ip_address,":4984/travel-sample (user 'admin', password 'password')"])
+    #default_value join(["http://",@sg_nodes.public_ip_address,":4984/travel-sample (user 'admin', password 'password')"])
+    default_value join(["http://",@sg_and_app_nodes.public_ip_address,":4984/travel-sample (user 'admin', password 'password')"])
 end
 
 output "secondarycluster" do
@@ -200,7 +216,8 @@ end
 output "travelapp" do
     label "Travel Application:"
     category "Demo"
-    default_value join(['http://',@app_nodes.public_ip_address,':8080/index.html'])
+    #default_value join(['http://',@app_nodes.public_ip_address,':8080/index.html'])
+    default_value join(['http://',@sg_and_app_nodes.public_ip_address,':8080/index.html'])
 end
 
 output "guilogin" do
@@ -245,19 +262,21 @@ operation 'launch' do
     output_mappings do {
         $primarycluster => join(["http://",$primary_ip,":", $cluster_port]),
         $secondarycluster => join(["http://",$secondary_ip,":", $cluster_port]),
-        $travelapp => join(["http://",$app_ip,":8080/index.html"]),
-        $primary_sg => join(["http://",$sg_ip,":4984/travel-sample (user 'admin', password 'password')"]),
+        #$travelapp => join(["http://",$app_ip,":8080/index.html"]),
+        #$primary_sg => join(["http://",$sg_ip,":4984/travel-sample (user 'admin', password 'password')"]),
+        $travelapp => join(["http://",$sg_and_app_ip,":8080/index.html"]),
+        $primary_sg => join(["http://",$sg_and_app_ip,":4984/travel-sample (user 'admin', password 'password')"]),
         $blank_nodes => $blank_dns,
         $primary_nodes => $primary_nodes_dns,
         $secondary_nodes => $secondary_nodes_dns,
     } end
 end
 
-define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @primary_cluster_query_index_fts_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $app_ip, $blank_dns, $sg_ip, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 45m, on_timeout: import.handle_timeout("Launch Timeout") do
+define generated_launch(@sg_and_app_nodes, @app_nodes, @blank_nodes, @primary_cluster_data_nodes, @primary_cluster_query_index_fts_nodes, @secondary_cluster_nodes, @sg_nodes, $cluster_port, $sg_port, $os_mapping, $os, $region, $region_mapping) return $sg_and_app_ip, $app_ip, $blank_dns, $sg_ip, $primary_ip, $secondary_ip, $primary_nodes_dns, $secondary_nodes_dns on_error: import.handle_error("Launch Failed:"), timeout: 45m, on_timeout: import.handle_timeout("Launch Timeout") do
 
     call import.log("Launching Cloud App")
 
-    $app_dns = $app_ips = $app_ip = $blank_dns = $blank_ips = $sg_ip = $sg_dns = $sg_ips = $primary_ip = $secondary_ip = $primary_nodes_dns = $secondary_nodes_dns = []
+    $app_dns = $app_ips = $app_ip = $blank_dns = $blank_ips = $sg_ip = $sg_dns = $sg_ips = $primary_ip = $secondary_ip = $primary_nodes_dns = $secondary_nodes_dns = $sg_and_app_ip = []
     $shutdown=240
     $indexstorage='memopt'
 
@@ -282,11 +301,12 @@ define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @
 
     call import.log("Concurrently Launching Nodes")
 
-    concurrent return $app_ips, $blank_dns, $sg_ips, $secondary_nodes_dns, $secondary_nodes_ips, $data_dns, $data_ips, $query_index_fts_dns task_label: "Launching Demo Environment", on_error: import.handle_error("Concurrent Launch Failed:") do
+    concurrent return $sg_and_app_ips, $app_ips, $blank_dns, $sg_ips, $secondary_nodes_dns, $secondary_nodes_ips, $data_dns, $data_ips, $query_index_fts_dns task_label: "Launching Demo Environment", on_error: import.handle_error("Concurrent Launch Failed:") do
 
-        call launch_nodes_ip_dns("App Nodes",@app_nodes) retrieve $app_ips, $app_dns
+        #call launch_nodes_ip_dns("App Nodes",@app_nodes) retrieve $app_ips, $app_dns
+        #call launch_nodes_ip_dns("SG Nodes", @sg_nodes) retrieve $sg_ips, $sg_dns
+        call launch_nodes_ip_dns("SG Nodes", @sg_and_app_nodes) retrieve $sg_and_app_ips, $sg_and_app_dns
         call launch_nodes_ip_dns("Blank Nodes", @blank_nodes) retrieve $blank_ips, $blank_dns
-        call launch_nodes_ip_dns("SG Nodes", @sg_nodes) retrieve $sg_ips, $sg_dns
         call launch_nodes_ip_dns("Secondary Cluster Nodes", @secondary_cluster_nodes) retrieve $secondary_nodes_ips, $secondary_nodes_dns
 
         concurrent return $data_dns, $data_ips, $query_index_fts_dns task_label: "Primary Cluster", on_error: import.handle_error("Concurrent Group Launch Failed:") do
@@ -295,8 +315,9 @@ define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @
         end
     end
 
-    $app_ip = $app_ips[0]
-    $sg_ip = $sg_ips[0]
+#    $app_ip = $app_ips[0]
+#    $sg_ip = $sg_ips[0]
+    $sg_and_app_ip = $sg_and_app_ips[0]
     $primary_ip = $data_ips[0]
     $primary_nodes_dns = $query_index_fts_dns + $data_dns
     $secondary_ip = $secondary_nodes_ips[0]

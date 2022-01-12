@@ -744,7 +744,7 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                 $clustered = true
                 $rebalance_count = $rebalance_count + $group['nodes']
 
-                if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true"
+                if $group['data'] != "true" || $group['query'] != "true" || $group['index'] != "true" || $group['fts'] != "true" || $group['analytics'] != "true" || $group['eventing'] != "true" || $group['backup'] != "true"
                     $mds = true;
                 end
 
@@ -753,7 +753,7 @@ define launch_cluster($groups, $node_hash, $url, $indexstorage, @eip) return $cl
                 end
 
                 call log("Cluster and Services check:" + to_s($group))
-                if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false"
+                if $group['data'] == "false" & $group['query'] == "false" & $group['index'] == "false" & $group['fts'] == "false" & $group['analytics'] == "false" & $group['eventing'] == "false" & $group['backup'] != "false"
                     call handle_error("Must select at least one service for a \"clustered\" node")
                 end
 
@@ -817,6 +817,9 @@ sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
         end
         if $group['eventing'] == "true"
           $group['services'] = $group['services'] + "eventing"
+        end
+        if $group['backup'] == "true"
+          $group['services'] = $group['services'] + "backup"
         end
       end
 

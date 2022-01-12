@@ -82,9 +82,9 @@ end
 parameter "version" do
   type "list"
   label "Couchbase Server Version"
-  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "6.6.0", "6.6.1", "7.0.0", "Cheshire-Cat-latest"
+  allowed_values "4.1.0", "4.1.1", "4.5.0", "4.5.1", "4.6.0", "4.6.1", "4.6.2", "4.6.3","4.6.4","4.6.5","5.0.1","5.1.1","5.5.1","5.5.2","5.5.3","6.0.0","6.0.1","6.0.2","6.0.3", "6.5.0", "6.5.1", "6.6.0", "6.6.1", "7.0.0", "Neo-latest"
   default "7.0.0"
-  description "7.0.0 Now Available!"
+  description "Neo (7.1) Now Available!"
 end
 parameter "cbserver_version" do
     like $version
@@ -326,13 +326,13 @@ mapping "os_mapping" do {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "url"
     },
-    "Cheshire-Cat-latest" => {
-        "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/cheshire-cat/latest",
-        "version" => "cheshire-cat"
+    "Neo-latest" => {
+        "baseurl" => "http://nas.service.couchbase.com/builds/latestbuilds/couchbase-server/neo/latest",
+        "version" => "neo"
     },
-    "7.0.0" => {
+    "7.0.3" => {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
-        "version" => "7.0.0"
+        "version" => "7.0.3"
     }
 } end
 

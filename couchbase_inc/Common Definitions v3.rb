@@ -816,7 +816,7 @@ sub task_label: "Launching " + $rebalance_count + " Node Cluster:" do
           $node_hash['fields']['inputs']['CB_SERVER_ANALYTICS_DISK'] = "text:TRUE"
         end
         if $group['eventing'] == "true"
-          $group['services'] = $group['services'] + "eventing"
+          $group['services'] = $group['services'] + "eventing,"
         end
         if $group['backup'] == "true"
           $group['services'] = $group['services'] + "backup"

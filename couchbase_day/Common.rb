@@ -38,25 +38,29 @@ end
 resource 'cb_node', type: 'server' do
     like @node
     name 'Couchbase Server 4.5'
-    server_template find('Couchbase Server 4.0 - Self-Service')#, revision: 23)
+    #server_template find('Couchbase Server 4.0 - Self-Service')#, revision: 23)
+    server_template find('Couchbase Self-Service Template 5.0')
 end
 
 resource 'cb_node_spot', type: 'server' do
     like @node_spot
     name 'Couchbase Server 4.5'
-    server_template find('Couchbase Server 4.0 - Self-Service')#, revision: 23)
+    #server_template find('Couchbase Server 4.0 - Self-Service')#, revision: 23)
+    server_template find('Couchbase Self-Service Template 5.0')
 end
 
 resource 'app_node', type: 'server' do
     like @node
     name 'zApp_node'
-    server_template find('CBSClient 4.0 Travel App', revision: 23)
+    #server_template find('CBSClient 4.0 Travel App', revision: 23)
+    server_template find('Couchbase Self-Service Template 5.0')
 end
 
 resource 'app_node_spot', type: 'server' do
     like @node_spot
     name 'zApp_node'
-    server_template find('CBSClient 4.0 Travel App', revision: 23)
+    #server_template find('CBSClient 4.0 Travel App', revision: 23)
+    server_template find('Couchbase Self-Service Template 5.0')
 end
 
 #########

@@ -137,8 +137,10 @@ mapping "os_mapping" do {
         "del" => "-"
     },
     "CentOS/RHEL 7.x" => {
-        "mci" => "RightImage_CentOS_7.0_x64_v14.2_HVM_EBS",
-        "mci_href" => "/api/multi_cloud_images/409407003",
+        #"mci" => "RightImage_CentOS_7.0_x64_v14.2_HVM_EBS",
+        "mci" => "Couchbase_CentOS_7_x64_v1_HVM_EBS",
+        #"mci_href" => "/api/multi_cloud_images/409407003",
+        "mci_href" => "/api/multi_cloud_images/426615004",
         "os" => "-centos7.x86_64.rpm",
         "del" => "-"
     },

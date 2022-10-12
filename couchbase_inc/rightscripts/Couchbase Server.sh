@@ -355,6 +355,10 @@ while true; do
          elif [[ "$join" =~ "This server does not have sufficient memory to support requested memory quota." ]]; then
              echo "Fatal Join Error: $join.";
              exit -1;
+         elif [[ "$join" =~ "Failed to establish TLS connection" ]]; then
+             join=`/opt/couchbase/bin/couchbase-cli server-add -c http://$ip:$CB_UI_PORT -p $CB_PASS -u $CB_USER \
+            --server-add=http://$nodename:$CB_UI_PORT --server-add-username=$CB_USER --server-add-password=$CB_PASS \
+            --services=$CB_SERVICES`
          fi
 
          echo "Not Joined: $join.";

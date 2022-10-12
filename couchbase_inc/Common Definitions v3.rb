@@ -333,6 +333,10 @@ mapping "os_mapping" do {
     "7.0.3" => {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "7.0.3"
+    },
+    "7.1.2" => {
+        "baseurl" => "https://s3.amazonaws.com/packages-unsupported.couchbase.com/7.1.2/couchbase-server-enterprise-neo-centos7-asan.x86_64.rpm",
+        "version" => ""
     }
 } end
 

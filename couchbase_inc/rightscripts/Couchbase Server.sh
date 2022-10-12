@@ -272,6 +272,9 @@ while [[ $(/opt/couchbase/bin/couchbase-cli node-init -c localhost:8091 -u $CB_U
   sleep 2;
 done
 
+#turning off TLS, needed for >7.1
+curl -u $CB_USER:$CB_PASS -X POST 'http://localhost:$CB_UI_PORT/internalSettings/'  -d 'httpNodeAddition=true' 
+
 echo "Setting my own tag to $righttag:"
 #date=`date -u +%H%M%S%3N`
 #add_tag "couchbase:$righttag=$date-$nodename;$CB_SERVICES"
@@ -343,7 +346,7 @@ while true; do
          echo "Attempting to join node: $ip:$CB_UI_PORT"
        
          join=`/opt/couchbase/bin/couchbase-cli server-add -c http://$ip:$CB_UI_PORT -p $CB_PASS -u $CB_USER \
-            --server-add=http://$nodename:$CB_UI_PORT --server-add-username=$CB_USER --server-add-password=$CB_PASS \
+            --server-add=$nodename:$CB_UI_PORT --server-add-username=$CB_USER --server-add-password=$CB_PASS \
             --services=$CB_SERVICES`
           
          if [[ "$join" =~ "added" ]]; then

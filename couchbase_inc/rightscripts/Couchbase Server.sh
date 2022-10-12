@@ -273,7 +273,7 @@ while [[ $(/opt/couchbase/bin/couchbase-cli node-init -c localhost:8091 -u $CB_U
 done
 
 #turning off TLS, needed for >7.1
-curl -u $CB_USER:$CB_PASS -X POST 'http://localhost:$CB_UI_PORT/internalSettings/'  -d 'httpNodeAddition=true' 
+curl -u $CB_USER:$CB_PASS -X POST http://localhost:$CB_UI_PORT/internalSettings/  -d 'httpNodeAddition=true' 
 
 echo "Setting my own tag to $righttag:"
 #date=`date -u +%H%M%S%3N`

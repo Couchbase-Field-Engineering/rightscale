@@ -272,9 +272,6 @@ while [[ $(/opt/couchbase/bin/couchbase-cli node-init -c localhost:8091 -u $CB_U
   sleep 2;
 done
 
-#turning off TLS, needed for >7.1
-curl -u $CB_USER:$CB_PASS -X POST http://localhost:$CB_UI_PORT/internalSettings/  -d 'httpNodeAddition=true' 
-
 echo "Setting my own tag to $righttag:"
 #date=`date -u +%H%M%S%3N`
 #add_tag "couchbase:$righttag=$date-$nodename;$CB_SERVICES"
@@ -334,6 +331,9 @@ while true; do
           curl -u $CB_USER:$CB_PASS -X POST http://localhost:$CB_UI_PORT/internalSettings -d indexAwareRebalanceDisabled=true
           echo "Enabling HTTP access:";
           curl -u $CB_USER:$CB_PASS -X POST http://localhost:$CB_UI_PORT/internalSettings -d httpNodeAddition=true
+#          echo "Turning off TLS, needed for >7.1"
+#          curl -u $CB_USER:$CB_PASS -X POST http://localhost:$CB_UI_PORT/internalSettings/  -d httpNodeAddition=true
+
           break 2
         fi
         
@@ -356,6 +356,10 @@ while true; do
              echo "Fatal Join Error: $join.";
              exit -1;
          elif [[ "$join" =~ "Failed to establish TLS connection" ]]; then
+             join=`/opt/couchbase/bin/couchbase-cli server-add -c http://$ip:$CB_UI_PORT -p $CB_PASS -u $CB_USER \
+            --server-add=http://$nodename:$CB_UI_PORT --server-add-username=$CB_USER --server-add-password=$CB_PASS \
+            --services=$CB_SERVICES`
+         else
              join=`/opt/couchbase/bin/couchbase-cli server-add -c http://$ip:$CB_UI_PORT -p $CB_PASS -u $CB_USER \
             --server-add=http://$nodename:$CB_UI_PORT --server-add-username=$CB_USER --server-add-password=$CB_PASS \
             --services=$CB_SERVICES`

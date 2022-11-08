@@ -326,6 +326,10 @@ mapping "os_mapping" do {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "url"
     },
+    "7.0.0" => {
+        "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
+        "version" => "7.0.0"
+    },
     "7.1.0" => {
         "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
         "version" => "7.1.0"
@@ -335,8 +339,8 @@ mapping "os_mapping" do {
         "version" => "7.0.3"
     },
     "7.1.2" => {
-        "baseurl" => "https://s3.amazonaws.com/packages-unsupported.couchbase.com/7.1.2/couchbase-server-enterprise-neo-centos7-asan.x86_64.rpm",
-        "version" => ""
+        "baseurl" => "https://s3.amazonaws.com/packages.couchbase.com/releases/",
+        "version" => "7.1.2"
     }
 } end
 

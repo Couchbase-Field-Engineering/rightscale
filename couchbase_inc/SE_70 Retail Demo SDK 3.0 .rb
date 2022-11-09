@@ -1,4 +1,4 @@
-name '7.0 Retail Demo - SDK 3.0'
+name '7.1 Retail Demo - SDK 3.0'
 rs_ca_ver 20161221
 import "package/se_common_v3", as: "import"
 
@@ -6,7 +6,7 @@ import "package/se_common_v3", as: "import"
 short_description '
 **Updated with Sync Gateway 2.7.0**
 
-**Updated with Couchbase Server 7.0**
+**Updated with Couchbase Server 7.1**
 
 **Updated with Python SDK 3.0**
 
@@ -246,7 +246,7 @@ define generated_launch(@app_nodes, @blank_nodes, @primary_cluster_data_nodes, @
     call import.validate_port($cluster_port)
     call import.get_url($os_mapping, $os, "7.0.0", "") retrieve $cb_url
 
-    $cb_url = "https://packages.couchbase.com/releases/7.0.0/couchbase-server-enterprise-7.0.0-centos7.x86_64.rpm"
+    $cb_url = "https://packages.couchbase.com/releases/7.1.0/couchbase-server-enterprise-7.1.0-centos7.x86_64.rpm"
     $sg_url = "https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.0/couchbase-sync-gateway-enterprise_2.7.0_x86_64.rpm"
     $inp = {
         'CB_SHUTDOWN':'text:',
